@@ -1,0 +1,3 @@
+[submodule "backend/api/rai"]
+	path = backend/api/rai
+	url = https://github.com/Infosys/Infosys-Responsible-AI-Toolkit.git
