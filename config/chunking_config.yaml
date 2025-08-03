@@ -1,0 +1,29 @@
+# config/chunking_config.yaml
+chunking:
+  default_strategy: "recursive"  # recursive, fixed, semantic
+  
+  text:
+    chunk_size: 1000
+    chunk_overlap: 200
+    separators: ["\n\n", "\n", ". ", " ", ""]
+    min_chunk_size: 100
+    max_chunk_size: 2000
+    
+  pdf:
+    chunk_size: 1500
+    chunk_overlap: 300
+    extract_images: false
+    ocr_enabled: false
+    
+  semantic:
+    model: "sentence-transformers/all-MiniLM-L6-v2"
+    similarity_threshold: 0.8
+    
+  token_limits:
+    gpt-4: 8192
+    gpt-3.5-turbo: 4096
+    
+metadata:
+  extract_title: true
+  extract_headings: true
+  preserve_formatting: false

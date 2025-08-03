@@ -1,0 +1,39 @@
+# config/intent_mappings.yaml
+intents:
+  product_search:
+    keywords_es: ["buscar", "necesito", "parte", "repuesto", "pieza"]
+    keywords_en: ["search", "need", "part", "spare", "component"]
+    next_state: "vehicle_selection"
+    
+  price_quote:
+    keywords_es: ["precio", "cuánto", "costo", "valor", "cotización"]
+    keywords_en: ["price", "cost", "quote", "how much"]
+    next_state: "article_lookup"
+    
+  technical_info:
+    keywords_es: ["manual", "especificación", "torque", "diagrama"]
+    keywords_en: ["manual", "specification", "torque", "diagram"]
+    next_state: "specification"
+    
+  order_status:
+    keywords_es: ["pedido", "orden", "envío", "entrega"]
+    keywords_en: ["order", "shipping", "delivery", "tracking"]
+    next_state: "order_lookup"
+    
+  return_policy:
+    keywords_es: ["devolución", "garantía", "cambio", "reembolso"]
+    keywords_en: ["return", "warranty", "exchange", "refund"]
+    next_state: "faq_response"
+    
+  support_faq:
+    keywords_es: ["horario", "ubicación", "contacto", "ayuda"]
+    keywords_en: ["hours", "location", "contact", "help"]
+    next_state: "faq_response"
+    
+  human_escalation:
+    keywords_es: ["hablar", "agente", "persona", "humano"]
+    keywords_en: ["speak", "agent", "person", "human"]
+    next_state: "escalation"
+    
+  unknown:
+    next_state: "fallback"
