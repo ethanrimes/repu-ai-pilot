@@ -164,3 +164,20 @@ BEGIN
     LIMIT 1;
 END;
 $$;
+
+-- Update search vector on document change
+CREATE OR REPLACE FUNCTION update_document_search_vector() RETURNS trigger AS $$
+BEGIN
+    NEW.search_vector := to_tsvector('spanish', coalesce(NEW.title, '') || ' ' || coalesce(NEW.content, ''));
+    NEW.updated_at := CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Update search vector on chunk change
+CREATE OR REPLACE FUNCTION update_chunk_search_vector() RETURNS trigger AS $$
+BEGIN
+    NEW.search_vector := to_tsvector('spanish', NEW.content);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;

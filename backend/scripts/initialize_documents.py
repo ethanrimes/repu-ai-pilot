@@ -84,41 +84,6 @@ CATEGORY_MAPPINGS = {
     "tech docs": DocumentCategory.TECH_DOCS
 }
 
-async def create_tables(database_url: str):
-    """Create all document-related tables"""
-    print("Creating database tables...")
-    
-    # Read and execute SQL
-    sql_file = Path(__file__).parent.parent / "src" / "infrastructure" / "database" / "document_tables.sql"
-    
-    if sql_file.exists():
-        engine = create_engine(database_url)
-        
-        with open(sql_file, 'r') as f:
-            sql_content = f.read()
-        
-        # Execute SQL statements
-        with engine.connect() as conn:
-            # Split by semicolon and execute each statement
-            statements = [s.strip() for s in sql_content.split(';') if s.strip()]
-            
-            for statement in statements:
-                try:
-                    conn.execute(statement)
-                    conn.commit()
-                except Exception as e:
-                    print(f"Warning executing statement: {e}")
-                    # Continue with other statements
-        
-        print("✅ Database tables created successfully")
-    else:
-        print("❌ SQL file not found, using SQLAlchemy to create tables...")
-        
-        # Fallback to SQLAlchemy
-        engine = create_engine(database_url)
-        Base.meta_data.create_all(bind=engine)
-        print("✅ Tables created with SQLAlchemy")
-
 def load_chunking_config() -> Dict[str, Any]:
     """Load chunking configuration"""
     config_path = Path(CHUNKING_CONFIG_PATH)
@@ -327,9 +292,6 @@ async def main():
     # Create database connection
     engine = create_engine(settings.database_url)
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    
-    # Create tables
-    await create_tables(settings.database_url)
     
     # Initialize services
     with SessionLocal() as db:

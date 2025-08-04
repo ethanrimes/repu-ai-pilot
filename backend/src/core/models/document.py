@@ -1,7 +1,7 @@
 # backend/src/core/models/document.py
 # Path: backend/src/core/models/document.py
 
-from pydantic import BaseModel, Field, field_validator, BeforeValidator, PlainSerializer
+from pydantic import BaseModel, Field, field_validator, BeforeValidator, PlainSerializer, ConfigDict
 from typing import List, Optional, Dict, Any, Annotated
 from datetime import datetime
 from enum import Enum
@@ -54,7 +54,8 @@ class DocumentBase(BaseModel):
     meta_data: Dict[str, Any] = Field(default_factory=dict)
     hierarchy: Dict[str, Any] = Field(default_factory=dict)
 
-    @field_validator('meta_data', 'hierarchy')
+    @field_validator('meta_data', 'hierarchy', mode='before')
+    @classmethod
     def validate_json_fields(cls, v):
         """Ensure JSON fields are dictionaries"""
         if v is None:
@@ -72,10 +73,8 @@ class ChunkBase(BaseModel):
 # Create Models (for insertion)
 class DocumentCreate(DocumentBase):
     """Model for creating a new document"""
-    content: str = Field(..., min_length=1)
-    
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "title": "Manual de Frenos Mazda CX-30",
                 "filename": "manual_brake_disc_100032_advics_6716338.md",
@@ -89,6 +88,9 @@ class DocumentCreate(DocumentBase):
                 "hierarchy": {"root": "tech_docs", "level1": "manuals"}
             }
         }
+    )
+    
+    content: str = Field(..., min_length=1)
 
 class ChunkCreate(ChunkBase):
     """Model for creating a new chunk"""
@@ -110,6 +112,8 @@ class DocumentVehicleLink(BaseModel):
 # Response Models (with IDs and timestamps)
 class Document(DocumentBase):
     """Complete document model with all fields"""
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     content: str
     content_hash: str
@@ -121,12 +125,11 @@ class Document(DocumentBase):
     chunks: List['Chunk'] = Field(default_factory=list)
     article_links: List[DocumentArticleLink] = Field(default_factory=list)
     vehicle_links: List[DocumentVehicleLink] = Field(default_factory=list)
-    
-    class Config:
-        from_attributes = True
 
 class Chunk(ChunkBase):
     """Complete chunk model with all fields"""
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     document_id: int
     embedding: Optional[List[float]] = None
@@ -134,9 +137,6 @@ class Chunk(ChunkBase):
     
     # Relationship
     document: Optional['Document'] = None
-    
-    class Config:
-        from_attributes = True
 
 # Update Models
 class DocumentUpdate(BaseModel):

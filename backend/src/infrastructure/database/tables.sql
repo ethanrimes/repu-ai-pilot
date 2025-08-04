@@ -91,30 +91,61 @@ CREATE TABLE IF NOT EXISTS order_items (
 );
 
 -- ============================================
--- Document Management
+-- Document Management Tables
 -- ============================================
 
+-- Main documents table
 CREATE TABLE IF NOT EXISTS documents (
     id SERIAL PRIMARY KEY,
+    search_vector tsvector,
     title VARCHAR(255) NOT NULL,
-    document_type VARCHAR(50),
-    file_path VARCHAR(500),
-    content_hash VARCHAR(64),
+    filename VARCHAR(255) NOT NULL,
+    file_path VARCHAR(500) NOT NULL,
+    document_type VARCHAR(50), -- manual, policy, faq, diagnostic, installation, etc.
+    category VARCHAR(100), -- faqs, legal, policies, shipping_info, store_info, tech_docs
+    subcategory VARCHAR(100), -- diagnostics, fluids, installation, manuals, services, torque
+    content TEXT,
+    content_hash VARCHAR(64) UNIQUE, -- SHA256 for deduplication
     language VARCHAR(2) DEFAULT 'es',
-    meta_data JSONB,
-    is_processed INTEGER DEFAULT 0,
+    meta_data JSONB DEFAULT '{}', -- Store additional meta_data
+    hierarchy JSONB DEFAULT '{}', -- Store file path hierarchy
+    is_processed BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Document chunks for vector search
+CREATE TABLE IF NOT EXISTS chunks (
+    id SERIAL PRIMARY KEY,
+    search_vector tsvector,
+    document_id INTEGER REFERENCES documents(id) ON DELETE CASCADE,
+    chunk_index INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    embedding vector(1536), -- OpenAI embedding dimension
+    meta_data JSONB DEFAULT '{}',
+    tokens INTEGER,
+    chunk_strategy VARCHAR(50) DEFAULT 'recursive',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS document_chunks (
+-- Link documents to TecDoc article IDs
+CREATE TABLE IF NOT EXISTS document_article_links (
     id SERIAL PRIMARY KEY,
     document_id INTEGER REFERENCES documents(id) ON DELETE CASCADE,
-    chunk_index INTEGER,
-    content TEXT,
-    embedding vector(1536),
-    meta_data JSONB,
-    tokens INTEGER,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    article_id INTEGER NOT NULL, -- TecDoc article ID
+    relevance_score FLOAT DEFAULT 1.0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(document_id, article_id)
+);
+
+-- Link documents to vehicle IDs
+CREATE TABLE IF NOT EXISTS document_vehicle_links (
+    id SERIAL PRIMARY KEY,
+    document_id INTEGER REFERENCES documents(id) ON DELETE CASCADE,
+    vehicle_id INTEGER NOT NULL, -- TecDoc vehicle ID
+    relevance_score FLOAT DEFAULT 1.0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(document_id, vehicle_id)
 );
 
 -- ============================================

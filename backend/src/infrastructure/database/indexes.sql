@@ -29,13 +29,27 @@ CREATE INDEX IF NOT EXISTS idx_order_items_article_id ON order_items(article_id)
 
 -- Document indexes
 CREATE INDEX IF NOT EXISTS idx_documents_type ON documents(document_type);
-CREATE INDEX IF NOT EXISTS idx_documents_processed ON documents(is_processed);
+CREATE INDEX IF NOT EXISTS idx_documents_category ON documents(category);
+CREATE INDEX IF NOT EXISTS idx_documents_subcategory ON documents(subcategory);
 CREATE INDEX IF NOT EXISTS idx_documents_language ON documents(language);
+CREATE INDEX IF NOT EXISTS idx_documents_processed ON documents(is_processed);
+CREATE INDEX IF NOT EXISTS idx_documents_hash ON documents(content_hash);
 
--- Document chunk indexes
-CREATE INDEX IF NOT EXISTS idx_chunks_document_id ON document_chunks(document_id);
-CREATE INDEX IF NOT EXISTS idx_chunks_embedding ON document_chunks 
-    USING ivfflat (embedding vector_cosine_ops);
+-- Chunk indexes
+CREATE INDEX IF NOT EXISTS idx_chunks_document_id ON chunks(document_id);
+CREATE INDEX IF NOT EXISTS idx_chunks_embedding ON chunks 
+    USING ivfflat (embedding vector_cosine_ops)
+    WITH (lists = 100); -- Adjust lists parameter based on data size
+
+-- Link table indexes
+CREATE INDEX IF NOT EXISTS idx_doc_article_links_doc_id ON document_article_links(document_id);
+CREATE INDEX IF NOT EXISTS idx_doc_article_links_article_id ON document_article_links(article_id);
+CREATE INDEX IF NOT EXISTS idx_doc_vehicle_links_doc_id ON document_vehicle_links(document_id);
+CREATE INDEX IF NOT EXISTS idx_doc_vehicle_links_vehicle_id ON document_vehicle_links(vehicle_id);
+
+-- Document indexes section
+CREATE INDEX IF NOT EXISTS idx_documents_search ON documents USING GIN(search_vector);
+CREATE INDEX IF NOT EXISTS idx_chunks_search ON chunks USING GIN(search_vector);
 
 -- Session indexes
 CREATE INDEX IF NOT EXISTS idx_sessions_session_id ON sessions(session_id);
