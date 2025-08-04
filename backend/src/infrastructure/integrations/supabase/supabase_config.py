@@ -1,9 +1,9 @@
-# backend/api/config/supabase_config.py
-# Path: backend/api/config/supabase_config.py
+# backend/src/infrastructure/integrations/supabase/supabase_config.py
+# Path: backend/src/infrastructure/integrations/supabase/supabase_config.py
 
 from supabase import create_client, Client
 from functools import lru_cache
-from .settings import get_settings
+from backend.src.config.settings import get_settings
 import psycopg2
 from psycopg2.pool import SimpleConnectionPool
 

@@ -3,7 +3,7 @@
 
 from upstash_redis import Redis
 from functools import lru_cache
-from .settings import get_settings
+from backend.src.config.settings import get_settings
 
 settings = get_settings()
 

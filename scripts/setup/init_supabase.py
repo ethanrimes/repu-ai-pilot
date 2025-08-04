@@ -45,7 +45,7 @@ class SupabaseInitializer:
             raise ValueError("Missing Supabase credentials in .env file")
         
         self.db_params = self._parse_database_url(self.database_url)
-        self.schema_dir = Path(__file__).parent.parent.parent / 'backend' / 'api' / 'database' / 'schemas'
+        self.schema_dir = Path(__file__).parent.parent.parent / 'backend' / 'src' / 'infrastructure' / 'database'
     
     def _parse_database_url(self, url):
         """Parse PostgreSQL URL into connection parameters"""

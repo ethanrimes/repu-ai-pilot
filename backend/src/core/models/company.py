@@ -1,154 +1,279 @@
-# backend/api/models/database/company.py
-"""Company-specific database models
-Path: backend/api/models/database/company.py
-"""
+# backend/src/core/models/company.py
+# Path: backend/src/core/models/company.py
 
-from sqlalchemy import Column, Integer, String, Numeric, DateTime, Text, ForeignKey, JSON, Date
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from datetime import datetime
+from pydantic import BaseModel, Field, EmailStr, field_validator
+from typing import List, Optional, Dict, Any
+from datetime import datetime, date
+from decimal import Decimal
+from enum import Enum
 
-Base = declarative_base()
+# Enums
+class CustomerType(str, Enum):
+    RETAIL = "retail"
+    WHOLESALE = "wholesale"
+    MECHANIC = "mechanic"
 
-class Stock(Base):
-    __tablename__ = 'stock'
-    
-    id = Column(Integer, primary_key=True)
-    article_id = Column(Integer, nullable=False)  # TecDoc article ID
-    supplier_id = Column(Integer)  # TecDoc supplier ID
-    quantity_available = Column(Integer, default=0)
-    warehouse_location = Column(String(50))
-    min_stock_level = Column(Integer, default=5)
-    max_stock_level = Column(Integer, default=100)
-    last_restocked = Column(DateTime)
-    last_updated = Column(DateTime, default=datetime.utcnow)
+class OrderStatus(str, Enum):
+    PENDING = "pending"
+    CONFIRMED = "confirmed"
+    PAID = "paid"
+    SHIPPED = "shipped"
+    DELIVERED = "delivered"
+    CANCELLED = "cancelled"
 
-class Price(Base):
-    __tablename__ = 'prices'
-    
-    id = Column(Integer, primary_key=True)
-    article_id = Column(Integer, nullable=False)
-    price_cop = Column(Numeric(12, 2), nullable=False)
-    cost_cop = Column(Numeric(12, 2))  # Internal cost
-    currency = Column(String(3), default='COP')
-    price_type = Column(String(20), default='retail')  # retail, wholesale, promotional
-    discount_percentage = Column(Numeric(5, 2), default=0)
-    valid_from = Column(Date)
-    valid_to = Column(Date)
-    created_at = Column(DateTime, default=datetime.utcnow)
+class PaymentMethod(str, Enum):
+    CASH = "cash"
+    TRANSFER = "transfer"
+    CARD = "card"
 
-class Customer(Base):
-    __tablename__ = 'customers'
-    
-    id = Column(Integer, primary_key=True)
-    firebase_uid = Column(String(128), unique=True)  # Firebase Auth UID
-    email = Column(String(255), unique=True)
-    phone = Column(String(20))
-    whatsapp_number = Column(String(20))
-    name = Column(String(255))
-    company_name = Column(String(255))
-    customer_type = Column(String(20), default='retail')  # retail, wholesale, mechanic
-    tax_id = Column(String(50))  # NIT/CC
-    address = Column(Text)
-    city = Column(String(100), default='Bogotá')
-    preferred_language = Column(String(2), default='es')
-    created_at = Column(DateTime, default=datetime.utcnow)
-    last_active = Column(DateTime)
-    
-    orders = relationship("Order", back_populates="customer")
+class PriceType(str, Enum):
+    RETAIL = "retail"
+    WHOLESALE = "wholesale"
+    PROMOTIONAL = "promotional"
 
-class Order(Base):
-    __tablename__ = 'orders'
-    
-    id = Column(Integer, primary_key=True)
-    customer_id = Column(Integer, ForeignKey('customers.id'))
-    order_number = Column(String(50), unique=True)
-    channel = Column(String(20))  # web, whatsapp
-    status = Column(String(20), default='pending')  # pending, confirmed, paid, shipped, delivered, cancelled
-    payment_method = Column(String(30))  # cash, transfer, card
-    subtotal_cop = Column(Numeric(12, 2))
-    tax_cop = Column(Numeric(12, 2))
-    shipping_cop = Column(Numeric(12, 2))
-    total_cop = Column(Numeric(12, 2))
-    notes = Column(Text)
-    shipping_address = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    customer = relationship("Customer", back_populates="orders")
-    items = relationship("OrderItem", back_populates="order")
+class Channel(str, Enum):
+    WEB = "web"
+    WHATSAPP = "whatsapp"
 
-class OrderItem(Base):
-    __tablename__ = 'order_items'
-    
-    id = Column(Integer, primary_key=True)
-    order_id = Column(Integer, ForeignKey('orders.id'))
-    article_id = Column(Integer, nullable=False)
-    article_number = Column(String(100))  # Store TecDoc article number
-    supplier_name = Column(String(100))
-    product_name = Column(String(255))
-    quantity = Column(Integer, nullable=False)
-    unit_price_cop = Column(Numeric(12, 2))
-    discount_cop = Column(Numeric(12, 2), default=0)
-    total_price_cop = Column(Numeric(12, 2))
-    
-    order = relationship("Order", back_populates="items")
+# Stock Models
+class StockBase(BaseModel):
+    """Base stock model"""
+    article_id: int = Field(..., gt=0)
+    supplier_id: Optional[int] = Field(None, gt=0)
+    quantity_available: int = Field(default=0, ge=0)
+    warehouse_location: Optional[str] = Field(None, max_length=50)
+    min_stock_level: int = Field(default=5, ge=0)
+    max_stock_level: int = Field(default=100, ge=0)
+    last_restocked: Optional[datetime] = None
 
-class ChatbotResponse(Base):
-    __tablename__ = 'chatbot_responses'
-    
-    id = Column(Integer, primary_key=True)
-    intent = Column(String(50), nullable=False)  # product_search, price_quote, etc.
-    question_pattern = Column(Text)
-    response_text_es = Column(Text)
-    response_text_en = Column(Text)
-    metadata = Column(JSON)  # Additional context
-    source = Column(String(100))  # FAQ, manual, policy, generated
-    priority = Column(Integer, default=0)
-    is_active = Column(Integer, default=1)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+class StockCreate(StockBase):
+    """Model for creating stock entry"""
+    pass
 
-class Document(Base):
-    __tablename__ = 'documents'
-    
-    id = Column(Integer, primary_key=True)
-    title = Column(String(255), nullable=False)
-    document_type = Column(String(50))  # manual, policy, faq, catalog
-    file_path = Column(String(500))
-    content_hash = Column(String(64))  # SHA256 hash for deduplication
-    language = Column(String(2), default='es')
-    metadata = Column(JSON)
-    is_processed = Column(Integer, default=0)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    
-    chunks = relationship("DocumentChunk", back_populates="document")
+class StockUpdate(BaseModel):
+    """Model for updating stock"""
+    quantity_available: Optional[int] = Field(None, ge=0)
+    warehouse_location: Optional[str] = Field(None, max_length=50)
+    min_stock_level: Optional[int] = Field(None, ge=0)
+    max_stock_level: Optional[int] = Field(None, ge=0)
+    last_restocked: Optional[datetime] = None
 
-class DocumentChunk(Base):
-    __tablename__ = 'document_chunks'
+class Stock(StockBase):
+    """Complete stock model"""
+    id: int
+    last_updated: datetime
     
-    id = Column(Integer, primary_key=True)
-    document_id = Column(Integer, ForeignKey('documents.id'))
-    chunk_index = Column(Integer)
-    content = Column(Text)
-    embedding_vector = Column(JSON)  # Store as JSON, or use pgvector
-    metadata = Column(JSON)
-    tokens = Column(Integer)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    
-    document = relationship("Document", back_populates="chunks")
+    class Config:
+        from_attributes = True
 
-class Session(Base):
-    __tablename__ = 'sessions'
+# Price Models
+class PriceBase(BaseModel):
+    """Base price model"""
+    article_id: int = Field(..., gt=0)
+    price_cop: Decimal = Field(..., decimal_places=2, ge=0)
+    cost_cop: Optional[Decimal] = Field(None, decimal_places=2, ge=0)
+    currency: str = Field(default="COP", pattern="^[A-Z]{3}$")
+    price_type: PriceType = Field(default=PriceType.RETAIL)
+    discount_percentage: Decimal = Field(default=0, ge=0, le=100, decimal_places=2)
+    valid_from: Optional[date] = None
+    valid_to: Optional[date] = None
+
+    @field_validator('valid_to')
+    def validate_date_range(cls, v, values):
+        """Ensure valid_to is after valid_from"""
+        if v and 'valid_from' in values and values['valid_from']:
+            if v < values['valid_from']:
+                raise ValueError('valid_to must be after valid_from')
+        return v
+
+class PriceCreate(PriceBase):
+    """Model for creating price"""
+    pass
+
+class PriceUpdate(BaseModel):
+    """Model for updating price"""
+    price_cop: Optional[Decimal] = Field(None, decimal_places=2, ge=0)
+    discount_percentage: Optional[Decimal] = Field(None, ge=0, le=100, decimal_places=2)
+    valid_to: Optional[date] = None
+
+class Price(PriceBase):
+    """Complete price model"""
+    id: int
+    created_at: datetime
     
-    id = Column(Integer, primary_key=True)
-    session_id = Column(String(128), unique=True, nullable=False)
-    customer_id = Column(Integer, ForeignKey('customers.id'))
-    channel = Column(String(20))  # web, whatsapp
-    current_state = Column(String(50))  # FSM state
-    intent = Column(String(50))
-    context = Column(JSON)  # Session context data
-    language = Column(String(2), default='es')
-    started_at = Column(DateTime, default=datetime.utcnow)
-    last_activity = Column(DateTime, default=datetime.utcnow)
-    ended_at = Column(DateTime)
+    class Config:
+        from_attributes = True
+
+# Customer Models
+class CustomerBase(BaseModel):
+    """Base customer model"""
+    email: EmailStr
+    phone: Optional[str] = Field(None, pattern="^\\+?[0-9\\s-]+$", max_length=20)
+    whatsapp_number: Optional[str] = Field(None, pattern="^\\+?[0-9]+$", max_length=20)
+    name: str = Field(..., min_length=1, max_length=255)
+    company_name: Optional[str] = Field(None, max_length=255)
+    customer_type: CustomerType = Field(default=CustomerType.RETAIL)
+    tax_id: Optional[str] = Field(None, max_length=50)
+    address: Optional[str] = None
+    city: str = Field(default="Bogotá", max_length=100)
+    preferred_language: str = Field(default="es", pattern="^[a-z]{2}$")
+
+class CustomerCreate(CustomerBase):
+    """Model for creating customer"""
+    firebase_uid: Optional[str] = Field(None, max_length=128)
+
+class CustomerUpdate(BaseModel):
+    """Model for updating customer"""
+    phone: Optional[str] = Field(None, pattern="^\\+?[0-9\\s-]+$", max_length=20)
+    whatsapp_number: Optional[str] = Field(None, pattern="^\\+?[0-9]+$", max_length=20)
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    company_name: Optional[str] = Field(None, max_length=255)
+    address: Optional[str] = None
+    city: Optional[str] = Field(None, max_length=100)
+    preferred_language: Optional[str] = Field(None, pattern="^[a-z]{2}$")
+
+class Customer(CustomerBase):
+    """Complete customer model"""
+    id: int
+    firebase_uid: Optional[str] = None
+    created_at: datetime
+    last_active: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
+
+# Order Item Models
+class OrderItemBase(BaseModel):
+    """Base order item model"""
+    article_id: int = Field(..., gt=0)
+    article_number: Optional[str] = Field(None, max_length=100)
+    supplier_name: Optional[str] = Field(None, max_length=100)
+    product_name: str = Field(..., max_length=255)
+    quantity: int = Field(..., gt=0)
+    unit_price_cop: Decimal = Field(..., decimal_places=2, ge=0)
+    discount_cop: Decimal = Field(default=0, decimal_places=2, ge=0)
+    
+    @property
+    def total_price_cop(self) -> Decimal:
+        """Calculate total price"""
+        return (self.unit_price_cop * self.quantity) - self.discount_cop
+
+class OrderItemCreate(OrderItemBase):
+    """Model for creating order item"""
+    pass
+
+class OrderItem(OrderItemBase):
+    """Complete order item model"""
+    id: int
+    order_id: int
+    total_price_cop: Decimal = Field(..., decimal_places=2, ge=0)
+    
+    class Config:
+        from_attributes = True
+
+# Order Models
+class OrderBase(BaseModel):
+    """Base order model"""
+    customer_id: int = Field(..., gt=0)
+    channel: Channel
+    payment_method: Optional[PaymentMethod] = None
+    notes: Optional[str] = None
+    shipping_address: Optional[str] = None
+
+class OrderCreate(OrderBase):
+    """Model for creating order"""
+    items: List[OrderItemCreate]
+
+class OrderUpdate(BaseModel):
+    """Model for updating order"""
+    status: Optional[OrderStatus] = None
+    payment_method: Optional[PaymentMethod] = None
+    notes: Optional[str] = None
+    shipping_address: Optional[str] = None
+
+class Order(OrderBase):
+    """Complete order model"""
+    id: int
+    order_number: str
+    status: OrderStatus = Field(default=OrderStatus.PENDING)
+    subtotal_cop: Decimal = Field(..., decimal_places=2, ge=0)
+    tax_cop: Decimal = Field(..., decimal_places=2, ge=0)
+    shipping_cop: Decimal = Field(..., decimal_places=2, ge=0)
+    total_cop: Decimal = Field(..., decimal_places=2, ge=0)
+    created_at: datetime
+    updated_at: datetime
+    
+    # Relationships
+    customer: Optional[Customer] = None
+    items: List[OrderItem] = Field(default_factory=list)
+    
+    class Config:
+        from_attributes = True
+
+# Session Models
+class SessionBase(BaseModel):
+    """Base session model"""
+    session_id: str = Field(..., min_length=1, max_length=128)
+    customer_id: Optional[int] = Field(None, gt=0)
+    channel: Optional[Channel] = None
+    current_state: Optional[str] = Field(None, max_length=50)
+    intent: Optional[str] = Field(None, max_length=50)
+    context: Dict[str, Any] = Field(default_factory=dict)
+    language: str = Field(default="es", pattern="^[a-z]{2}$")
+
+class SessionCreate(SessionBase):
+    """Model for creating session"""
+    pass
+
+class SessionUpdate(BaseModel):
+    """Model for updating session"""
+    current_state: Optional[str] = Field(None, max_length=50)
+    intent: Optional[str] = Field(None, max_length=50)
+    context: Optional[Dict[str, Any]] = None
+    language: Optional[str] = Field(None, pattern="^[a-z]{2}$")
+
+class Session(SessionBase):
+    """Complete session model"""
+    id: int
+    started_at: datetime
+    last_activity: datetime
+    ended_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
+
+# Search and Filter Models
+class StockSearch(BaseModel):
+    """Stock search parameters"""
+    article_ids: Optional[List[int]] = None
+    warehouse_location: Optional[str] = None
+    min_quantity: Optional[int] = None
+    low_stock_only: bool = False
+    limit: int = Field(default=10, ge=1, le=100)
+    offset: int = Field(default=0, ge=0)
+
+class PriceSearch(BaseModel):
+    """Price search parameters"""
+    article_ids: Optional[List[int]] = None
+    price_type: Optional[PriceType] = None
+    active_only: bool = True
+    limit: int = Field(default=10, ge=1, le=100)
+    offset: int = Field(default=0, ge=0)
+
+class CustomerSearch(BaseModel):
+    """Customer search parameters"""
+    query: Optional[str] = None
+    customer_type: Optional[CustomerType] = None
+    city: Optional[str] = None
+    limit: int = Field(default=10, ge=1, le=100)
+    offset: int = Field(default=0, ge=0)
+
+class OrderSearch(BaseModel):
+    """Order search parameters"""
+    customer_id: Optional[int] = None
+    status: Optional[OrderStatus] = None
+    channel: Optional[Channel] = None
+    date_from: Optional[date] = None
+    date_to: Optional[date] = None
+    limit: int = Field(default=10, ge=1, le=100)
+    offset: int = Field(default=0, ge=0)

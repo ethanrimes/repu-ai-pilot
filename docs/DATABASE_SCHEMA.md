@@ -92,7 +92,7 @@ Uploaded documents (manuals, policies).
 | file_path | VARCHAR(500) | Storage path |
 | content_hash | VARCHAR(64) | SHA256 hash |
 | language | VARCHAR(2) | Document language |
-| metadata | JSONB | Additional metadata |
+| meta_data | JSONB | Additional meta_data |
 
 ### document_chunks
 Chunked document content with embeddings.
@@ -129,7 +129,7 @@ Chat messages within sessions.
 | session_id | INTEGER | FK to sessions |
 | role | VARCHAR(20) | user/assistant/system |
 | content | TEXT | Message content |
-| metadata | JSONB | Message metadata |
+| meta_data | JSONB | Message meta_data |
 | created_at | TIMESTAMP | Message timestamp |
 
 ## Indexes
