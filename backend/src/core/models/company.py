@@ -1,7 +1,7 @@
 # backend/src/core/models/company.py
 # Path: backend/src/core/models/company.py
 
-from pydantic import BaseModel, Field, EmailStr, field_validator, ConfigDict
+from pydantic import BaseModel, Field, EmailStr, field_validator, ConfigDict, SkipValidation
 from typing import List, Optional, Dict, Any
 from datetime import datetime, date
 from decimal import Decimal
@@ -139,6 +139,10 @@ class Customer(CustomerBase):
     firebase_uid: Optional[str] = None
     created_at: datetime
     last_active: Optional[datetime] = None
+    
+    # Relationships - Skip validation to avoid infinite recursion
+    orders: SkipValidation[List['Order']] = Field(default_factory=list)
+    sessions: SkipValidation[List['Session']] = Field(default_factory=list)
 
 # Order Item Models
 class OrderItemBase(BaseModel):
@@ -167,6 +171,9 @@ class OrderItem(OrderItemBase):
     id: int
     order_id: int
     total_price_cop: Decimal = Field(..., decimal_places=2, ge=0)
+    
+    # Skip validation for order relationship to avoid circular reference
+    order: SkipValidation[Optional['Order']] = None
 
 # Order Models
 class OrderBase(BaseModel):
@@ -202,9 +209,9 @@ class Order(OrderBase):
     created_at: datetime
     updated_at: datetime
     
-    # Relationships
-    customer: Optional[Customer] = None
-    items: List[OrderItem] = Field(default_factory=list)
+    # Relationships - Skip validation to avoid infinite recursion
+    customer: SkipValidation[Optional[Customer]] = None
+    items: SkipValidation[List[OrderItem]] = Field(default_factory=list)
 
 # Session Models
 class SessionBase(BaseModel):
@@ -236,6 +243,9 @@ class Session(SessionBase):
     started_at: datetime
     last_activity: datetime
     ended_at: Optional[datetime] = None
+    
+    # Relationship - Skip validation to avoid infinite recursion
+    customer: SkipValidation[Optional[Customer]] = None
 
 # Search and Filter Models
 class StockSearch(BaseModel):
@@ -272,3 +282,9 @@ class OrderSearch(BaseModel):
     date_to: Optional[date] = None
     limit: int = Field(default=10, ge=1, le=100)
     offset: int = Field(default=0, ge=0)
+
+# Update forward references
+Customer.model_rebuild()
+Order.model_rebuild()
+OrderItem.model_rebuild()
+Session.model_rebuild()
