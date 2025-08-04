@@ -56,7 +56,11 @@ class GitignoreParser:
         '.eggs',
         'backend/api/rai',  # Ignore RAI directory
         'backend/api/rai/',
-        'backend/api/rai/*'
+        'backend/api/rai/*',
+        'frontend/package-lock.json',
+        'package-lock.json',
+        'docs/',
+        'docs'
     ]
     
     def __init__(self, gitignore_path):
