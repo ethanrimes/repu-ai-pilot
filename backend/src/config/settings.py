@@ -2,6 +2,7 @@
 # Path: backend/api/config/settings.py
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from .env_loader import load_environment  # This will auto-load env vars
 from typing import Optional, Literal
 from functools import lru_cache
 
@@ -18,7 +19,6 @@ class Settings(BaseSettings):
     
     # Database (Supabase)
     supabase_url: str
-    supabase_anon_key: str
     supabase_service_key: str
     database_url: str
     
@@ -90,7 +90,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        case_sensitive=False
+        case_sensitive=False,
+        extra="ignore"  # Add this to ignore extra env vars
     )
 
 @lru_cache()

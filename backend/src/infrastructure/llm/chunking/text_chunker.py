@@ -16,7 +16,7 @@ class TextChunker:
     def chunk_text(self, 
                    text: str, 
                    strategy: Optional[str] = None,
-                   metadata: Optional[Dict] = None) -> List[Dict]:
+                   meta_data: Optional[Dict] = None) -> List[Dict]:
         """Chunk text using specified strategy"""
         
         strategy = strategy or self.strategy
@@ -30,14 +30,14 @@ class TextChunker:
         else:
             raise ValueError(f"Unknown chunking strategy: {strategy}")
         
-        # Add metadata to each chunk
+        # Add meta_data to each chunk
         result = []
         for i, chunk in enumerate(chunks):
             chunk_data = {
                 'content': chunk,
                 'chunk_index': i,
                 'chunk_hash': hashlib.md5(chunk.encode()).hexdigest(),
-                'metadata': metadata or {},
+                'meta_data': meta_data or {},
                 'tokens': self._count_tokens(chunk),
                 'strategy': strategy
             }

@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS documents (
     file_path VARCHAR(500),
     content_hash VARCHAR(64),
     language VARCHAR(2) DEFAULT 'es',
-    metadata JSONB,
+    meta_data JSONB,
     is_processed INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS document_chunks (
     chunk_index INTEGER,
     content TEXT,
     embedding vector(1536),
-    metadata JSONB,
+    meta_data JSONB,
     tokens INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS conversation_messages (
     session_id INTEGER REFERENCES sessions(id) ON DELETE CASCADE,
     role VARCHAR(20) NOT NULL,
     content TEXT NOT NULL,
-    metadata JSONB,
+    meta_data JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -153,6 +153,6 @@ CREATE TABLE IF NOT EXISTS analytics_events (
     event_type VARCHAR(50) NOT NULL,
     session_id VARCHAR(128),
     customer_id INTEGER,
-    metadata JSONB,
+    meta_data JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

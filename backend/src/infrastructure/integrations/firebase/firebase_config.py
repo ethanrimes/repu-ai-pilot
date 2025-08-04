@@ -4,7 +4,7 @@
 import firebase_admin
 from firebase_admin import credentials, auth
 from functools import lru_cache
-from .settings import get_settings
+from backend.src.config.settings import get_settings
 import json
 
 settings = get_settings()

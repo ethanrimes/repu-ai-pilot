@@ -18,17 +18,20 @@ $$ language 'plpgsql';
 -- Vector Search Functions
 -- ============================================
 
+-- Drop existing function if it exists
+DROP FUNCTION IF EXISTS search_documents(vector(1536), integer, jsonb);
+
 -- Search documents by embedding similarity
 CREATE OR REPLACE FUNCTION search_documents(
     query_embedding vector(1536),
     match_count int DEFAULT 5,
-    filter_metadata jsonb DEFAULT '{}'::jsonb
+    filter_meta_data jsonb DEFAULT '{}'::jsonb
 )
 RETURNS TABLE (
     chunk_id int,
     document_id int,
     content text,
-    metadata jsonb,
+    meta_data jsonb,
     similarity float
 )
 LANGUAGE plpgsql
@@ -39,10 +42,10 @@ BEGIN
         dc.id as chunk_id,
         dc.document_id,
         dc.content,
-        dc.metadata,
+        dc.meta_data,
         1 - (dc.embedding <=> query_embedding) as similarity
     FROM document_chunks dc
-    WHERE dc.metadata @> filter_metadata
+    WHERE dc.meta_data @> filter_meta_data
     ORDER BY dc.embedding <=> query_embedding
     LIMIT match_count;
 END;

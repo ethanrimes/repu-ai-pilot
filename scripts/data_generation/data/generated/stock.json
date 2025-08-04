@@ -1,0 +1,922 @@
+[
+  {
+    "article_id": 1602276,
+    "supplier_id": 206,
+    "quantity_available": 83,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 16,
+    "max_stock_level": 176,
+    "last_restocked": "2025-07-27 02:50:46.681856",
+    "last_updated": "2025-08-04 11:57:25.651793"
+  },
+  {
+    "article_id": 7967906,
+    "supplier_id": 89,
+    "quantity_available": 98,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 18,
+    "max_stock_level": 181,
+    "last_restocked": "2025-06-09 11:34:28.184357",
+    "last_updated": "2025-08-04 11:57:25.651926"
+  },
+  {
+    "article_id": 7599188,
+    "supplier_id": 55,
+    "quantity_available": 97,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 16,
+    "max_stock_level": 96,
+    "last_restocked": "2025-06-07 06:00:21.932111",
+    "last_updated": "2025-08-04 11:57:25.651940"
+  },
+  {
+    "article_id": 958060,
+    "supplier_id": 94,
+    "quantity_available": 54,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 17,
+    "max_stock_level": 93,
+    "last_restocked": "2025-08-01 12:00:43.643532",
+    "last_updated": "2025-08-04 11:57:25.651951"
+  },
+  {
+    "article_id": 958062,
+    "supplier_id": 6304,
+    "quantity_available": 36,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 7,
+    "max_stock_level": 111,
+    "last_restocked": "2025-06-30 15:31:16.673309",
+    "last_updated": "2025-08-04 11:57:25.651964"
+  },
+  {
+    "article_id": 4700838,
+    "supplier_id": 108,
+    "quantity_available": 145,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 14,
+    "max_stock_level": 193,
+    "last_restocked": "2025-07-04 23:27:27.206147",
+    "last_updated": "2025-08-04 11:57:25.651976"
+  },
+  {
+    "article_id": 5090433,
+    "supplier_id": 2,
+    "quantity_available": 138,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 9,
+    "max_stock_level": 62,
+    "last_restocked": "2025-07-11 04:56:35.667487",
+    "last_updated": "2025-08-04 11:57:25.651987"
+  },
+  {
+    "article_id": 5090434,
+    "supplier_id": 4625,
+    "quantity_available": 103,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 7,
+    "max_stock_level": 144,
+    "last_restocked": "2025-06-27 08:15:51.736384",
+    "last_updated": "2025-08-04 11:57:25.651997"
+  },
+  {
+    "article_id": 1043329,
+    "supplier_id": 94,
+    "quantity_available": 3,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 20,
+    "max_stock_level": 80,
+    "last_restocked": "2025-06-13 05:25:16.806392",
+    "last_updated": "2025-08-04 11:57:25.652007"
+  },
+  {
+    "article_id": 8048275,
+    "supplier_id": 73,
+    "quantity_available": 21,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 20,
+    "max_stock_level": 54,
+    "last_restocked": "2025-07-02 18:40:39.231429",
+    "last_updated": "2025-08-04 11:57:25.652017"
+  },
+  {
+    "article_id": 1043331,
+    "supplier_id": 6304,
+    "quantity_available": 83,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 16,
+    "max_stock_level": 161,
+    "last_restocked": "2025-07-25 11:32:49.628903",
+    "last_updated": "2025-08-04 11:57:25.652026"
+  },
+  {
+    "article_id": 1032537,
+    "supplier_id": 6304,
+    "quantity_available": 102,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 15,
+    "max_stock_level": 158,
+    "last_restocked": "2025-07-06 05:27:15.492446",
+    "last_updated": "2025-08-04 11:57:25.652036"
+  },
+  {
+    "article_id": 1041158,
+    "supplier_id": 6304,
+    "quantity_available": 69,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 7,
+    "max_stock_level": 199,
+    "last_restocked": "2025-07-21 06:51:16.460575",
+    "last_updated": "2025-08-04 11:57:25.652047"
+  },
+  {
+    "article_id": 1043328,
+    "supplier_id": 6304,
+    "quantity_available": 62,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 5,
+    "max_stock_level": 118,
+    "last_restocked": "2025-06-16 10:03:36.605688",
+    "last_updated": "2025-08-04 11:57:25.652056"
+  },
+  {
+    "article_id": 155265,
+    "supplier_id": 6304,
+    "quantity_available": 130,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 5,
+    "max_stock_level": 76,
+    "last_restocked": "2025-07-02 19:57:26.979074",
+    "last_updated": "2025-08-04 11:57:25.652065"
+  },
+  {
+    "article_id": 4792513,
+    "supplier_id": 39,
+    "quantity_available": 110,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 7,
+    "max_stock_level": 78,
+    "last_restocked": "2025-07-29 05:38:28.359898",
+    "last_updated": "2025-08-04 11:57:25.652075"
+  },
+  {
+    "article_id": 4701547,
+    "supplier_id": 108,
+    "quantity_available": 150,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 14,
+    "max_stock_level": 161,
+    "last_restocked": "2025-06-26 12:35:44.078620",
+    "last_updated": "2025-08-04 11:57:25.652085"
+  },
+  {
+    "article_id": 6716338,
+    "supplier_id": 6104,
+    "quantity_available": 113,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 6,
+    "max_stock_level": 199,
+    "last_restocked": "2025-07-09 19:07:19.150119",
+    "last_updated": "2025-08-04 11:57:25.652094"
+  },
+  {
+    "article_id": 5988664,
+    "supplier_id": 4373,
+    "quantity_available": 77,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 11,
+    "max_stock_level": 132,
+    "last_restocked": "2025-06-27 18:18:08.051918",
+    "last_updated": "2025-08-04 11:57:25.652104"
+  },
+  {
+    "article_id": 5626927,
+    "supplier_id": 350,
+    "quantity_available": 126,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 17,
+    "max_stock_level": 53,
+    "last_restocked": "2025-07-31 00:31:51.956103",
+    "last_updated": "2025-08-04 11:57:25.652113"
+  },
+  {
+    "article_id": 5607527,
+    "supplier_id": 350,
+    "quantity_available": 109,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 6,
+    "max_stock_level": 55,
+    "last_restocked": "2025-06-25 12:12:36.819350",
+    "last_updated": "2025-08-04 11:57:25.652123"
+  },
+  {
+    "article_id": 6552458,
+    "supplier_id": 6008,
+    "quantity_available": 134,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 6,
+    "max_stock_level": 136,
+    "last_restocked": "2025-07-13 00:35:59.018504",
+    "last_updated": "2025-08-04 11:57:25.652133"
+  },
+  {
+    "article_id": 1629597,
+    "supplier_id": 101,
+    "quantity_available": 139,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 19,
+    "max_stock_level": 99,
+    "last_restocked": "2025-07-01 04:01:03.903579",
+    "last_updated": "2025-08-04 11:57:25.652142"
+  },
+  {
+    "article_id": 951575,
+    "supplier_id": 101,
+    "quantity_available": 24,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 19,
+    "max_stock_level": 98,
+    "last_restocked": "2025-06-19 23:50:54.886703",
+    "last_updated": "2025-08-04 11:57:25.652152"
+  },
+  {
+    "article_id": 5086713,
+    "supplier_id": 2,
+    "quantity_available": 35,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 10,
+    "max_stock_level": 184,
+    "last_restocked": "2025-07-30 09:51:11.557468",
+    "last_updated": "2025-08-04 11:57:25.652161"
+  },
+  {
+    "article_id": 5086714,
+    "supplier_id": 4625,
+    "quantity_available": 128,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 19,
+    "max_stock_level": 177,
+    "last_restocked": "2025-07-30 11:07:16.490420",
+    "last_updated": "2025-08-04 11:57:25.652171"
+  },
+  {
+    "article_id": 7595774,
+    "supplier_id": 55,
+    "quantity_available": 63,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 14,
+    "max_stock_level": 127,
+    "last_restocked": "2025-07-30 03:49:41.317922",
+    "last_updated": "2025-08-04 11:57:25.652181"
+  },
+  {
+    "article_id": 7596487,
+    "supplier_id": 55,
+    "quantity_available": 127,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 9,
+    "max_stock_level": 74,
+    "last_restocked": "2025-07-29 16:14:29.497326",
+    "last_updated": "2025-08-04 11:57:25.652190"
+  },
+  {
+    "article_id": 9008533,
+    "supplier_id": 6265,
+    "quantity_available": 75,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 7,
+    "max_stock_level": 151,
+    "last_restocked": "2025-07-08 05:52:23.183057",
+    "last_updated": "2025-08-04 11:57:25.652199"
+  },
+  {
+    "article_id": 8095287,
+    "supplier_id": 73,
+    "quantity_available": 96,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 13,
+    "max_stock_level": 188,
+    "last_restocked": "2025-06-13 21:43:52.732877",
+    "last_updated": "2025-08-04 11:57:25.652208"
+  },
+  {
+    "article_id": 8272938,
+    "supplier_id": 4990,
+    "quantity_available": 24,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 13,
+    "max_stock_level": 121,
+    "last_restocked": "2025-06-10 23:56:25.939114",
+    "last_updated": "2025-08-04 11:57:25.652218"
+  },
+  {
+    "article_id": 8670161,
+    "supplier_id": 4821,
+    "quantity_available": 44,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 12,
+    "max_stock_level": 129,
+    "last_restocked": "2025-08-01 09:50:03.581690",
+    "last_updated": "2025-08-04 11:57:25.652227"
+  },
+  {
+    "article_id": 2767730,
+    "supplier_id": 151,
+    "quantity_available": 43,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 5,
+    "max_stock_level": 86,
+    "last_restocked": "2025-06-13 19:38:49.772542",
+    "last_updated": "2025-08-04 11:57:25.652237"
+  },
+  {
+    "article_id": 2767111,
+    "supplier_id": 151,
+    "quantity_available": 69,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 17,
+    "max_stock_level": 197,
+    "last_restocked": "2025-07-14 12:09:18.818675",
+    "last_updated": "2025-08-04 11:57:25.652250"
+  },
+  {
+    "article_id": 5251553,
+    "supplier_id": 39,
+    "quantity_available": 54,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 5,
+    "max_stock_level": 200,
+    "last_restocked": "2025-08-02 04:00:06.157169",
+    "last_updated": "2025-08-04 11:57:25.652260"
+  },
+  {
+    "article_id": 5502475,
+    "supplier_id": 4364,
+    "quantity_available": 141,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 13,
+    "max_stock_level": 87,
+    "last_restocked": "2025-06-22 13:40:57.815394",
+    "last_updated": "2025-08-04 11:57:25.652269"
+  },
+  {
+    "article_id": 9143168,
+    "supplier_id": 6104,
+    "quantity_available": 87,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 11,
+    "max_stock_level": 77,
+    "last_restocked": "2025-06-10 03:09:24.295017",
+    "last_updated": "2025-08-04 11:57:25.652279"
+  },
+  {
+    "article_id": 9143328,
+    "supplier_id": 6104,
+    "quantity_available": 99,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 6,
+    "max_stock_level": 131,
+    "last_restocked": "2025-06-16 14:28:14.557164",
+    "last_updated": "2025-08-04 11:57:25.652288"
+  },
+  {
+    "article_id": 9143348,
+    "supplier_id": 6104,
+    "quantity_available": 79,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 12,
+    "max_stock_level": 55,
+    "last_restocked": "2025-06-22 10:37:34.244424",
+    "last_updated": "2025-08-04 11:57:25.652298"
+  },
+  {
+    "article_id": 6707717,
+    "supplier_id": 6104,
+    "quantity_available": 112,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 5,
+    "max_stock_level": 80,
+    "last_restocked": "2025-07-14 05:15:27.068353",
+    "last_updated": "2025-08-04 11:57:25.652308"
+  },
+  {
+    "article_id": 6065938,
+    "supplier_id": 4373,
+    "quantity_available": 145,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 18,
+    "max_stock_level": 118,
+    "last_restocked": "2025-06-13 08:49:49.417602",
+    "last_updated": "2025-08-04 11:57:25.652318"
+  },
+  {
+    "article_id": 6066757,
+    "supplier_id": 4373,
+    "quantity_available": 98,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 6,
+    "max_stock_level": 182,
+    "last_restocked": "2025-06-12 10:05:10.232130",
+    "last_updated": "2025-08-04 11:57:25.652327"
+  },
+  {
+    "article_id": 5607372,
+    "supplier_id": 350,
+    "quantity_available": 86,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 20,
+    "max_stock_level": 143,
+    "last_restocked": "2025-06-08 02:55:46.512559",
+    "last_updated": "2025-08-04 11:57:25.652337"
+  },
+  {
+    "article_id": 8359945,
+    "supplier_id": 65,
+    "quantity_available": 120,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 7,
+    "max_stock_level": 97,
+    "last_restocked": "2025-06-18 02:24:02.711824",
+    "last_updated": "2025-08-04 11:57:25.652346"
+  },
+  {
+    "article_id": 8359955,
+    "supplier_id": 65,
+    "quantity_available": 51,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 7,
+    "max_stock_level": 138,
+    "last_restocked": "2025-06-29 18:05:03.381405",
+    "last_updated": "2025-08-04 11:57:25.652355"
+  },
+  {
+    "article_id": 8402675,
+    "supplier_id": 65,
+    "quantity_available": 113,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 10,
+    "max_stock_level": 87,
+    "last_restocked": "2025-06-17 12:29:46.881947",
+    "last_updated": "2025-08-04 11:57:25.652365"
+  },
+  {
+    "article_id": 4783286,
+    "supplier_id": 311,
+    "quantity_available": 80,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 5,
+    "max_stock_level": 150,
+    "last_restocked": "2025-07-15 17:21:41.642361",
+    "last_updated": "2025-08-04 11:57:25.652374"
+  },
+  {
+    "article_id": 4782016,
+    "supplier_id": 311,
+    "quantity_available": 125,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 8,
+    "max_stock_level": 95,
+    "last_restocked": "2025-07-09 07:40:10.010634",
+    "last_updated": "2025-08-04 11:57:25.652385"
+  },
+  {
+    "article_id": 8487445,
+    "supplier_id": 278,
+    "quantity_available": 60,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 13,
+    "max_stock_level": 156,
+    "last_restocked": "2025-07-09 15:00:18.055653",
+    "last_updated": "2025-08-04 11:57:25.652394"
+  },
+  {
+    "article_id": 1620122,
+    "supplier_id": 101,
+    "quantity_available": 118,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 10,
+    "max_stock_level": 152,
+    "last_restocked": "2025-06-19 12:01:07.106275",
+    "last_updated": "2025-08-04 11:57:25.652403"
+  },
+  {
+    "article_id": 833617,
+    "supplier_id": 295,
+    "quantity_available": 10,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 18,
+    "max_stock_level": 149,
+    "last_restocked": "2025-07-08 05:19:10.125038",
+    "last_updated": "2025-08-04 11:57:25.652413"
+  },
+  {
+    "article_id": 1178230,
+    "supplier_id": 295,
+    "quantity_available": 7,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 11,
+    "max_stock_level": 187,
+    "last_restocked": "2025-06-14 15:14:16.601727",
+    "last_updated": "2025-08-04 11:57:25.652423"
+  },
+  {
+    "article_id": 5084070,
+    "supplier_id": 2,
+    "quantity_available": 39,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 20,
+    "max_stock_level": 93,
+    "last_restocked": "2025-06-17 15:03:47.464629",
+    "last_updated": "2025-08-04 11:57:25.652432"
+  },
+  {
+    "article_id": 5083334,
+    "supplier_id": 2,
+    "quantity_available": 144,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 11,
+    "max_stock_level": 82,
+    "last_restocked": "2025-07-04 22:45:34.841134",
+    "last_updated": "2025-08-04 11:57:25.652442"
+  },
+  {
+    "article_id": 5081118,
+    "supplier_id": 2,
+    "quantity_available": 47,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 20,
+    "max_stock_level": 51,
+    "last_restocked": "2025-07-31 21:44:04.553590",
+    "last_updated": "2025-08-04 11:57:25.652451"
+  },
+  {
+    "article_id": 5082548,
+    "supplier_id": 2,
+    "quantity_available": 76,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 16,
+    "max_stock_level": 188,
+    "last_restocked": "2025-06-11 15:24:00.049264",
+    "last_updated": "2025-08-04 11:57:25.652460"
+  },
+  {
+    "article_id": 5084071,
+    "supplier_id": 4625,
+    "quantity_available": 138,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 18,
+    "max_stock_level": 164,
+    "last_restocked": "2025-06-26 02:53:53.361564",
+    "last_updated": "2025-08-04 11:57:25.652470"
+  },
+  {
+    "article_id": 5083335,
+    "supplier_id": 4625,
+    "quantity_available": 112,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 20,
+    "max_stock_level": 109,
+    "last_restocked": "2025-06-24 01:00:39.547728",
+    "last_updated": "2025-08-04 11:57:25.652480"
+  },
+  {
+    "article_id": 5082549,
+    "supplier_id": 4625,
+    "quantity_available": 121,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 5,
+    "max_stock_level": 195,
+    "last_restocked": "2025-08-01 07:09:53.314894",
+    "last_updated": "2025-08-04 11:57:25.652489"
+  },
+  {
+    "article_id": 5081119,
+    "supplier_id": 4625,
+    "quantity_available": 62,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 16,
+    "max_stock_level": 165,
+    "last_restocked": "2025-06-22 03:44:34.470014",
+    "last_updated": "2025-08-04 11:57:25.652499"
+  },
+  {
+    "article_id": 7598910,
+    "supplier_id": 55,
+    "quantity_available": 7,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 11,
+    "max_stock_level": 179,
+    "last_restocked": "2025-07-17 07:44:52.782368",
+    "last_updated": "2025-08-04 11:57:25.652508"
+  },
+  {
+    "article_id": 7598439,
+    "supplier_id": 55,
+    "quantity_available": 150,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 13,
+    "max_stock_level": 121,
+    "last_restocked": "2025-06-22 14:07:04.425503",
+    "last_updated": "2025-08-04 11:57:25.652517"
+  },
+  {
+    "article_id": 3026040,
+    "supplier_id": 268,
+    "quantity_available": 91,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 12,
+    "max_stock_level": 109,
+    "last_restocked": "2025-06-08 22:13:51.972385",
+    "last_updated": "2025-08-04 11:57:25.652526"
+  },
+  {
+    "article_id": 519471,
+    "supplier_id": 197,
+    "quantity_available": 28,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 6,
+    "max_stock_level": 124,
+    "last_restocked": "2025-06-10 11:37:27.549000",
+    "last_updated": "2025-08-04 11:57:25.652535"
+  },
+  {
+    "article_id": 1708894,
+    "supplier_id": 403,
+    "quantity_available": 103,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 10,
+    "max_stock_level": 119,
+    "last_restocked": "2025-06-25 04:49:17.443917",
+    "last_updated": "2025-08-04 11:57:25.652543"
+  },
+  {
+    "article_id": 2027272,
+    "supplier_id": 121,
+    "quantity_available": 87,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 16,
+    "max_stock_level": 187,
+    "last_restocked": "2025-07-17 17:09:43.353185",
+    "last_updated": "2025-08-04 11:57:25.652552"
+  },
+  {
+    "article_id": 2026849,
+    "supplier_id": 121,
+    "quantity_available": 32,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 8,
+    "max_stock_level": 147,
+    "last_restocked": "2025-06-29 13:50:16.217564",
+    "last_updated": "2025-08-04 11:57:25.652560"
+  },
+  {
+    "article_id": 1086572,
+    "supplier_id": 94,
+    "quantity_available": 47,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 10,
+    "max_stock_level": 129,
+    "last_restocked": "2025-07-16 12:33:06.761234",
+    "last_updated": "2025-08-04 11:57:25.652568"
+  },
+  {
+    "article_id": 1086571,
+    "supplier_id": 94,
+    "quantity_available": 67,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 11,
+    "max_stock_level": 143,
+    "last_restocked": "2025-06-30 20:05:24.848311",
+    "last_updated": "2025-08-04 11:57:25.652577"
+  },
+  {
+    "article_id": 8092972,
+    "supplier_id": 73,
+    "quantity_available": 7,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 12,
+    "max_stock_level": 125,
+    "last_restocked": "2025-08-03 12:17:29.207458",
+    "last_updated": "2025-08-04 11:57:25.652586"
+  },
+  {
+    "article_id": 8093374,
+    "supplier_id": 73,
+    "quantity_available": 87,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 6,
+    "max_stock_level": 120,
+    "last_restocked": "2025-07-28 14:14:10.768780",
+    "last_updated": "2025-08-04 11:57:25.652595"
+  },
+  {
+    "article_id": 6494849,
+    "supplier_id": 6103,
+    "quantity_available": 118,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 8,
+    "max_stock_level": 172,
+    "last_restocked": "2025-07-24 18:53:12.208180",
+    "last_updated": "2025-08-04 11:57:25.652604"
+  },
+  {
+    "article_id": 6494850,
+    "supplier_id": 6103,
+    "quantity_available": 134,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 7,
+    "max_stock_level": 145,
+    "last_restocked": "2025-07-05 00:52:11.988570",
+    "last_updated": "2025-08-04 11:57:25.652613"
+  },
+  {
+    "article_id": 6494938,
+    "supplier_id": 6103,
+    "quantity_available": 92,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 12,
+    "max_stock_level": 163,
+    "last_restocked": "2025-06-13 15:44:17.329134",
+    "last_updated": "2025-08-04 11:57:25.652621"
+  },
+  {
+    "article_id": 8252989,
+    "supplier_id": 248,
+    "quantity_available": 46,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 9,
+    "max_stock_level": 69,
+    "last_restocked": "2025-06-23 07:12:45.115963",
+    "last_updated": "2025-08-04 11:57:25.652631"
+  },
+  {
+    "article_id": 8290120,
+    "supplier_id": 4990,
+    "quantity_available": 61,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 10,
+    "max_stock_level": 166,
+    "last_restocked": "2025-07-28 20:33:37.645442",
+    "last_updated": "2025-08-04 11:57:25.652642"
+  },
+  {
+    "article_id": 8290080,
+    "supplier_id": 4990,
+    "quantity_available": 67,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 12,
+    "max_stock_level": 198,
+    "last_restocked": "2025-06-30 21:30:51.297608",
+    "last_updated": "2025-08-04 11:57:25.652653"
+  },
+  {
+    "article_id": 6054253,
+    "supplier_id": 129,
+    "quantity_available": 100,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 13,
+    "max_stock_level": 155,
+    "last_restocked": "2025-06-19 04:00:03.220952",
+    "last_updated": "2025-08-04 11:57:25.652664"
+  },
+  {
+    "article_id": 8680641,
+    "supplier_id": 4821,
+    "quantity_available": 136,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 5,
+    "max_stock_level": 84,
+    "last_restocked": "2025-06-09 11:30:50.797227",
+    "last_updated": "2025-08-04 11:57:25.652673"
+  },
+  {
+    "article_id": 8680640,
+    "supplier_id": 4821,
+    "quantity_available": 17,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 13,
+    "max_stock_level": 159,
+    "last_restocked": "2025-07-16 09:21:19.412788",
+    "last_updated": "2025-08-04 11:57:25.652683"
+  },
+  {
+    "article_id": 3131389,
+    "supplier_id": 6358,
+    "quantity_available": 28,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 5,
+    "max_stock_level": 116,
+    "last_restocked": "2025-07-21 13:58:05.942592",
+    "last_updated": "2025-08-04 11:57:25.652692"
+  },
+  {
+    "article_id": 3974836,
+    "supplier_id": 343,
+    "quantity_available": 77,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 13,
+    "max_stock_level": 74,
+    "last_restocked": "2025-07-17 07:37:08.129551",
+    "last_updated": "2025-08-04 11:57:25.652702"
+  },
+  {
+    "article_id": 2766524,
+    "supplier_id": 151,
+    "quantity_available": 134,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 18,
+    "max_stock_level": 87,
+    "last_restocked": "2025-07-02 07:21:47.572469",
+    "last_updated": "2025-08-04 11:57:25.652711"
+  },
+  {
+    "article_id": 2301246,
+    "supplier_id": 39,
+    "quantity_available": 95,
+    "warehouse_location": "BODEGA_CENTRO",
+    "min_stock_level": 8,
+    "max_stock_level": 173,
+    "last_restocked": "2025-06-13 02:48:08.575060",
+    "last_updated": "2025-08-04 11:57:25.652720"
+  },
+  {
+    "article_id": 2323168,
+    "supplier_id": 39,
+    "quantity_available": 56,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 10,
+    "max_stock_level": 161,
+    "last_restocked": "2025-06-14 23:12:52.154355",
+    "last_updated": "2025-08-04 11:57:25.652730"
+  },
+  {
+    "article_id": 9482749,
+    "supplier_id": 4377,
+    "quantity_available": 72,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 16,
+    "max_stock_level": 163,
+    "last_restocked": "2025-07-07 09:55:01.613657",
+    "last_updated": "2025-08-04 11:57:25.652740"
+  },
+  {
+    "article_id": 9483060,
+    "supplier_id": 4377,
+    "quantity_available": 14,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 10,
+    "max_stock_level": 76,
+    "last_restocked": "2025-06-09 06:53:51.576729",
+    "last_updated": "2025-08-04 11:57:25.652749"
+  },
+  {
+    "article_id": 1178229,
+    "supplier_id": 199,
+    "quantity_available": 74,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 18,
+    "max_stock_level": 125,
+    "last_restocked": "2025-06-19 13:30:17.628481",
+    "last_updated": "2025-08-04 11:57:25.652759"
+  },
+  {
+    "article_id": 833616,
+    "supplier_id": 199,
+    "quantity_available": 135,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 17,
+    "max_stock_level": 137,
+    "last_restocked": "2025-06-09 13:15:37.300422",
+    "last_updated": "2025-08-04 11:57:25.652770"
+  },
+  {
+    "article_id": 2323166,
+    "supplier_id": 86,
+    "quantity_available": 0,
+    "warehouse_location": "BODEGA_NORTE",
+    "min_stock_level": 7,
+    "max_stock_level": 119,
+    "last_restocked": "2025-07-23 11:09:04.553978",
+    "last_updated": "2025-08-04 11:57:25.652780"
+  },
+  {
+    "article_id": 2301245,
+    "supplier_id": 86,
+    "quantity_available": 64,
+    "warehouse_location": "BODEGA_SUR",
+    "min_stock_level": 17,
+    "max_stock_level": 155,
+    "last_restocked": "2025-07-20 00:55:35.601108",
+    "last_updated": "2025-08-04 11:57:25.652789"
+  },
+  {
+    "article_id": 6552459,
+    "supplier_id": 6008,
+    "quantity_available": 95,
+    "warehouse_location": "PRINCIPAL",
+    "min_stock_level": 18,
+    "max_stock_level": 170,
+    "last_restocked": "2025-07-08 17:16:33.023885",
+    "last_updated": "2025-08-04 11:57:25.652799"
+  }
+]

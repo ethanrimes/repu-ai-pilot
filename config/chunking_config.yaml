@@ -1,29 +1,71 @@
 # config/chunking_config.yaml
-chunking:
-  default_strategy: "recursive"  # recursive, fixed, semantic
+# Path: config/chunking_config.yaml
+
+# Default chunking strategy
+default_strategy: recursive
+
+# Text chunking configuration
+text:
+  chunk_size: 1000  # Target chunk size in characters
+  chunk_overlap: 200  # Overlap between chunks
+  separators:  # Separators for recursive splitting (in order of preference)
+    - "\n\n"  # Double newline (paragraphs)
+    - "\n"    # Single newline
+    - ". "    # Sentence end
+    - "! "    # Exclamation
+    - "? "    # Question
+    - "; "    # Semicolon
+    - ", "    # Comma
+    - " "     # Space
+    - ""      # Character level (last resort)
   
-  text:
-    chunk_size: 1000
-    chunk_overlap: 200
-    separators: ["\n\n", "\n", ". ", " ", ""]
-    min_chunk_size: 100
-    max_chunk_size: 2000
-    
-  pdf:
+  # Token limits
+  max_tokens: 400  # Maximum tokens per chunk
+  min_tokens: 50   # Minimum tokens per chunk
+
+# PDF-specific configuration
+pdf:
+  chunk_size: 1500
+  chunk_overlap: 300
+  extract_images: false
+  extract_tables: true
+
+# Markdown-specific configuration  
+markdown:
+  chunk_size: 1200
+  chunk_overlap: 200
+  split_on_headers: true
+  min_header_level: 2  # Don't split on h1
+  preserve_formatting: true
+
+# Document type specific overrides
+document_type_config:
+  manual:
     chunk_size: 1500
     chunk_overlap: 300
-    extract_images: false
-    ocr_enabled: false
-    
-  semantic:
-    model: "sentence-transformers/all-MiniLM-L6-v2"
-    similarity_threshold: 0.8
-    
-  token_limits:
-    gpt-4: 8192
-    gpt-3.5-turbo: 4096
-    
-metadata:
-  extract_title: true
-  extract_headings: true
-  preserve_formatting: false
+    strategy: recursive
+  
+  faq:
+    chunk_size: 800
+    chunk_overlap: 100
+    strategy: recursive
+    split_on_headers: true
+  
+  policy:
+    chunk_size: 1200
+    chunk_overlap: 200
+    strategy: recursive
+  
+  technical:
+    chunk_size: 1000
+    chunk_overlap: 250
+    strategy: recursive
+    preserve_code_blocks: true
+
+# Semantic chunking configuration (future enhancement)
+semantic:
+  enabled: false
+  model: "sentence-transformers/all-MiniLM-L6-v2"
+  similarity_threshold: 0.8
+  min_chunk_size: 200
+  max_chunk_size: 2000
