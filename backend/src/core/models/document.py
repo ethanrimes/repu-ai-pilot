@@ -1,7 +1,7 @@
 # backend/src/core/models/document.py
 # Path: backend/src/core/models/document.py
 
-from pydantic import BaseModel, Field, field_validator, BeforeValidator, PlainSerializer, ConfigDict
+from pydantic import BaseModel, Field, field_validator, BeforeValidator, PlainSerializer, ConfigDict, SkipValidation
 from typing import List, Optional, Dict, Any, Annotated
 from datetime import datetime
 from enum import Enum
@@ -121,10 +121,10 @@ class Document(DocumentBase):
     created_at: datetime
     updated_at: datetime
     
-    # Relationships
-    chunks: List['Chunk'] = Field(default_factory=list)
-    article_links: List[DocumentArticleLink] = Field(default_factory=list)
-    vehicle_links: List[DocumentVehicleLink] = Field(default_factory=list)
+    # Relationships - Skip validation to avoid infinite recursion
+    chunks: SkipValidation[List['Chunk']] = Field(default_factory=list)
+    article_links: SkipValidation[List[DocumentArticleLink]] = Field(default_factory=list)
+    vehicle_links: SkipValidation[List[DocumentVehicleLink]] = Field(default_factory=list)
 
 class Chunk(ChunkBase):
     """Complete chunk model with all fields"""
@@ -135,8 +135,8 @@ class Chunk(ChunkBase):
     embedding: Optional[List[float]] = None
     created_at: datetime
     
-    # Relationship
-    document: Optional['Document'] = None
+    # Relationship - Skip validation to avoid infinite recursion
+    document: SkipValidation[Optional['Document']] = None
 
 # Update Models
 class DocumentUpdate(BaseModel):
