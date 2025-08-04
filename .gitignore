@@ -75,7 +75,7 @@ next-env.d.ts
 secrets/
 credentials/
 backend/.env
-
+frontend/.env.local
 
 # ============================================
 # Database

@@ -162,7 +162,7 @@ class BrakeArticleLoader:
         
         click.echo("🗄️ Inserting data into database...")
         
-        # Parse database URL
+        # Parse database URL (keep your existing parsing code)
         import re
         pattern = r'postgresql://([^:]+):([^@]+)@([^:]+):(\d+)/(.+)'
         match = re.match(pattern, self.database_url)
@@ -171,52 +171,72 @@ class BrakeArticleLoader:
             click.echo("❌ Invalid DATABASE_URL format")
             return
         
-        db_params = {
-            'user': match.group(1),
-            'password': match.group(2),
-            'host': match.group(3),
-            'port': match.group(4),
-            'database': match.group(5)
-        }
+        # Handle username.project_ref format for pooler connections
+        username = match.group(1)
+        if '.' in username:
+            # It's a pooler connection like postgres.bvlsfldbymqcitmidobs
+            base_user = username.split('.')[0]
+            db_params = {
+                'user': username,  # Use full username for pooler
+                'password': match.group(2),
+                'host': match.group(3),
+                'port': match.group(4),
+                'database': match.group(5)
+            }
+        else:
+            db_params = {
+                'user': match.group(1),
+                'password': match.group(2),
+                'host': match.group(3),
+                'port': match.group(4),
+                'database': match.group(5)
+            }
         
         try:
             conn = psycopg2.connect(**db_params)
             cur = conn.cursor()
             
-            # Insert stock
+            # Insert stock - Delete existing first, then insert
             click.echo("  📥 Inserting stock...")
             for stock in stock_data:
+                # Delete existing stock for this article
+                cur.execute("DELETE FROM stock WHERE article_id = %s", 
+                        (stock['article_id'],))
+                
+                # Insert new stock
                 cur.execute("""
                     INSERT INTO stock (article_id, supplier_id, quantity_available,
-                                     warehouse_location, min_stock_level, max_stock_level,
-                                     last_restocked)
+                                    warehouse_location, min_stock_level, max_stock_level,
+                                    last_restocked)
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
-                    ON CONFLICT (article_id) DO UPDATE SET
-                        quantity_available = EXCLUDED.quantity_available,
-                        last_updated = CURRENT_TIMESTAMP
                 """, (stock['article_id'], stock['supplier_id'], 
-                     stock['quantity_available'], stock['warehouse_location'],
-                     stock['min_stock_level'], stock['max_stock_level'],
-                     stock['last_restocked']))
+                    stock['quantity_available'], stock['warehouse_location'],
+                    stock['min_stock_level'], stock['max_stock_level'],
+                    stock['last_restocked']))
             
-            # Insert prices
+            # Insert prices - Delete existing first, then insert
             click.echo("  📥 Inserting prices...")
+            # Get unique article_ids
+            article_ids = set(price['article_id'] for price in price_data)
+            
+            # Delete existing prices for these articles
+            for article_id in article_ids:
+                cur.execute("DELETE FROM prices WHERE article_id = %s", (article_id,))
+            
+            # Insert new prices
             for price in price_data:
                 cur.execute("""
                     INSERT INTO prices (article_id, price_cop, cost_cop, currency,
-                                      price_type, discount_percentage, valid_from, valid_to)
+                                    price_type, discount_percentage, valid_from, valid_to)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                    ON CONFLICT (article_id, price_type) DO UPDATE SET
-                        price_cop = EXCLUDED.price_cop,
-                        cost_cop = EXCLUDED.cost_cop,
-                        valid_to = EXCLUDED.valid_to
                 """, (price['article_id'], price['price_cop'], price['cost_cop'],
-                     price['currency'], price['price_type'], 
-                     price['discount_percentage'], price['valid_from'], 
-                     price['valid_to']))
+                    price['currency'], price['price_type'], 
+                    price['discount_percentage'], price['valid_from'], 
+                    price['valid_to']))
             
             conn.commit()
-            click.echo("  ✅ Data inserted successfully")
+            click.echo(f"  ✅ Inserted {len(stock_data)} stock records")
+            click.echo(f"  ✅ Inserted {len(price_data)} price records")
             
         except Exception as e:
             click.echo(f"  ❌ Database error: {e}")
