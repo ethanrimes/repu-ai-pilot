@@ -21,8 +21,46 @@ import re
 class GitignoreParser:
     """Parse and apply .gitignore patterns"""
     
+    # Always ignore these directories
+    DEFAULT_IGNORES = [
+        '.git',
+        '.svn',
+        '.hg',
+        '.bzr',
+        '_darcs',
+        'CVS',
+        '.DS_Store',
+        'Thumbs.db',
+        '__pycache__',
+        '*.pyc',
+        'node_modules',
+        '.venv',
+        'venv',
+        'env',
+        '.env.local',
+        '.env.*.local',
+        'dist',
+        'build',
+        '.next',
+        '.nuxt',
+        '.cache',
+        '.pytest_cache',
+        '.coverage',
+        'htmlcov',
+        '.tox',
+        '.mypy_cache',
+        '.ruff_cache',
+        '.vscode',
+        '.idea',
+        '*.egg-info',
+        '.eggs',
+        'backend/api/rai',  # Ignore RAI directory
+        'backend/api/rai/',
+        'backend/api/rai/*'
+    ]
+    
     def __init__(self, gitignore_path):
-        self.patterns = []
+        self.patterns = self.DEFAULT_IGNORES.copy()
         self.gitignore_path = Path(gitignore_path)
         self.root_dir = self.gitignore_path.parent
         
@@ -37,9 +75,29 @@ class GitignoreParser:
         """Check if a path should be ignored based on gitignore patterns"""
         path = Path(path)
         
+        # Always ignore .git and other VCS directories
+        if path.name in ['.git', '.svn', '.hg', '.bzr', '_darcs', 'CVS']:
+            return True
+        
+        # Check if any parent directory is .git
+        for parent in path.parents:
+            if parent.name in ['.git', '.svn', '.hg', '.bzr', '_darcs', 'CVS']:
+                return True
+        
         # Get relative path from root
         try:
             rel_path = path.relative_to(self.root_dir)
+            rel_str = str(rel_path).replace('\\', '/')
+            
+            # Check if this is or is inside backend/api/rai
+            if rel_str == 'backend/api/rai' or rel_str.startswith('backend/api/rai/'):
+                return True
+            
+            # Also check individual path components
+            parts = rel_str.split('/')
+            if len(parts) >= 3 and parts[0] == 'backend' and parts[1] == 'api' and parts[2] == 'rai':
+                return True
+                
         except ValueError:
             return False
         
@@ -98,7 +156,7 @@ class GitignoreParser:
         return False
 
 
-def generate_tree(root_path, gitignore_parser, prefix="", is_last=True):
+def generate_tree(root_path, gitignore_parser, prefix="", is_last=True, max_depth=None, current_depth=0):
     """Generate a tree structure of the directory"""
     lines = []
     root_path = Path(root_path)
@@ -111,8 +169,8 @@ def generate_tree(root_path, gitignore_parser, prefix="", is_last=True):
     connector = "└── " if is_last else "├── "
     lines.append(prefix + connector + root_path.name)
     
-    # Only recurse if it's a directory
-    if root_path.is_dir():
+    # Only recurse if it's a directory and we haven't hit max depth
+    if root_path.is_dir() and (max_depth is None or current_depth < max_depth):
         # Get all items and filter
         items = []
         try:
@@ -130,7 +188,9 @@ def generate_tree(root_path, gitignore_parser, prefix="", is_last=True):
                 item, 
                 gitignore_parser,
                 prefix + extension,
-                is_last_item
+                is_last_item,
+                max_depth,
+                current_depth + 1
             )
             lines.extend(subtree)
     
@@ -182,6 +242,9 @@ def process_path(path, root_path, gitignore_parser, processed_files):
 def main():
     parser = argparse.ArgumentParser(description='Condense codebase into a single text file')
     parser.add_argument('paths', nargs='*', help='Specific files or directories to include (default: entire codebase)')
+    parser.add_argument('--max-depth', type=int, help='Maximum tree depth to display')
+    parser.add_argument('--include-env', action='store_true', help='Include .env files (normally excluded)')
+    parser.add_argument('--include-rai', action='store_true', help='Include backend/api/rai directory (normally excluded)')
     args = parser.parse_args()
     
     # Setup paths
@@ -191,12 +254,22 @@ def main():
     # Create gitignore parser
     gitignore_parser = GitignoreParser(gitignore_path)
     
+    # Optionally include .env files
+    if args.include_env:
+        gitignore_parser.patterns = [p for p in gitignore_parser.patterns if not p.startswith('.env')]
+    
+    # Optionally include RAI directory
+    if args.include_rai:
+        gitignore_parser.patterns = [p for p in gitignore_parser.patterns 
+                                   if p not in ['backend/api/rai', 'backend/api/rai/', 'backend/api/rai/*']]
+    
     # Generate timestamp for filename
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_file = Path.home() / 'Downloads' / f'codebase_{timestamp}.txt'
     
     print(f"Condensing codebase from: {root_path}")
     print(f"Output file: {output_file}")
+    print(f"Ignoring: .git, node_modules, __pycache__, backend/api/rai, and other common directories")
     
     # Prepare output content
     output_lines = []
@@ -224,7 +297,7 @@ def main():
     
     for i, item in enumerate(items):
         is_last = (i == len(items) - 1)
-        tree_lines = generate_tree(item, gitignore_parser, "", is_last)
+        tree_lines = generate_tree(item, gitignore_parser, "", is_last, args.max_depth)
         output_lines.extend(tree_lines)
     
     output_lines.append("")
@@ -256,6 +329,7 @@ def main():
         for item in sorted(root_path.rglob('*')):
             if item.is_file() and not gitignore_parser.should_ignore(item):
                 output_lines.append(get_file_content(item, root_path))
+                processed_files.add(item)
     
     # Write output file
     output_content = '\n'.join(output_lines)
