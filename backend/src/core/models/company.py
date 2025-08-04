@@ -1,7 +1,7 @@
 # backend/src/core/models/company.py
 # Path: backend/src/core/models/company.py
 
-from pydantic import BaseModel, Field, EmailStr, field_validator
+from pydantic import BaseModel, Field, EmailStr, field_validator, ConfigDict
 from typing import List, Optional, Dict, Any
 from datetime import datetime, date
 from decimal import Decimal
@@ -60,11 +60,10 @@ class StockUpdate(BaseModel):
 
 class Stock(StockBase):
     """Complete stock model"""
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     last_updated: datetime
-    
-    class Config:
-        from_attributes = True
 
 # Price Models
 class PriceBase(BaseModel):
@@ -79,10 +78,11 @@ class PriceBase(BaseModel):
     valid_to: Optional[date] = None
 
     @field_validator('valid_to')
-    def validate_date_range(cls, v, values):
+    @classmethod
+    def validate_date_range(cls, v, info):
         """Ensure valid_to is after valid_from"""
-        if v and 'valid_from' in values and values['valid_from']:
-            if v < values['valid_from']:
+        if v and 'valid_from' in info.data and info.data['valid_from']:
+            if v < info.data['valid_from']:
                 raise ValueError('valid_to must be after valid_from')
         return v
 
@@ -98,11 +98,10 @@ class PriceUpdate(BaseModel):
 
 class Price(PriceBase):
     """Complete price model"""
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     created_at: datetime
-    
-    class Config:
-        from_attributes = True
 
 # Customer Models
 class CustomerBase(BaseModel):
@@ -134,13 +133,12 @@ class CustomerUpdate(BaseModel):
 
 class Customer(CustomerBase):
     """Complete customer model"""
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     firebase_uid: Optional[str] = None
     created_at: datetime
     last_active: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
 
 # Order Item Models
 class OrderItemBase(BaseModel):
@@ -164,12 +162,11 @@ class OrderItemCreate(OrderItemBase):
 
 class OrderItem(OrderItemBase):
     """Complete order item model"""
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     order_id: int
     total_price_cop: Decimal = Field(..., decimal_places=2, ge=0)
-    
-    class Config:
-        from_attributes = True
 
 # Order Models
 class OrderBase(BaseModel):
@@ -193,6 +190,8 @@ class OrderUpdate(BaseModel):
 
 class Order(OrderBase):
     """Complete order model"""
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     order_number: str
     status: OrderStatus = Field(default=OrderStatus.PENDING)
@@ -206,9 +205,6 @@ class Order(OrderBase):
     # Relationships
     customer: Optional[Customer] = None
     items: List[OrderItem] = Field(default_factory=list)
-    
-    class Config:
-        from_attributes = True
 
 # Session Models
 class SessionBase(BaseModel):
@@ -234,13 +230,12 @@ class SessionUpdate(BaseModel):
 
 class Session(SessionBase):
     """Complete session model"""
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     started_at: datetime
     last_activity: datetime
     ended_at: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
 
 # Search and Filter Models
 class StockSearch(BaseModel):

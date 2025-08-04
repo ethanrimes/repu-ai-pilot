@@ -33,6 +33,16 @@ CREATE TRIGGER update_session_on_message
     AFTER INSERT ON conversation_messages
     FOR EACH ROW EXECUTE FUNCTION update_session_activity();
 
+DROP TRIGGER IF EXISTS update_document_search_vector_trigger ON documents;
+CREATE TRIGGER update_document_search_vector_trigger
+    BEFORE INSERT OR UPDATE ON documents
+    FOR EACH ROW EXECUTE FUNCTION update_document_search_vector();
+
+DROP TRIGGER IF EXISTS update_chunk_search_vector_trigger ON chunks;
+CREATE TRIGGER update_chunk_search_vector_trigger
+    BEFORE INSERT OR UPDATE ON chunks
+    FOR EACH ROW EXECUTE FUNCTION update_chunk_search_vector();
+
 -- ============================================
 -- Row Level Security (RLS)
 -- ============================================

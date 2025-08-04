@@ -28,6 +28,7 @@ class DocumentService:
         self.repository = repository
         self.text_chunker = TextChunker(chunking_config)
         self.embedding_service = get_embedding_service()
+        self.chunking_config = chunking_config
     
     async def process_document(
         self, 
@@ -43,15 +44,27 @@ class DocumentService:
     ) -> Tuple[Document, List[Chunk]]:
         """Process a single document: create, chunk, embed, and link"""
         
+        logger.info(f"Starting to process document: {file_path}")
+        logger.info(f"Parameters - title: {title}, type: {document_type}, category: {category}")
+        
         # Read file content
-        with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
+        logger.info(f"Reading file content from: {file_path}")
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            logger.info(f"Successfully read file: {file_path} (size: {len(content)} chars)")
+        except Exception as e:
+            logger.error(f"Failed to read file {file_path}: {str(e)}")
+            raise
         
         # Extract hierarchy from file path
+        logger.info("Extracting hierarchy from file path")
         path_parts = Path(file_path).parts
         hierarchy = self._extract_hierarchy(path_parts)
+        logger.info(f"Extracted hierarchy: {hierarchy}")
         
         # Merge provided meta_data with extracted meta_data
+        logger.info("Preparing file metadata")
         file_meta_data = {
             'file_size': os.path.getsize(file_path),
             'file_extension': Path(file_path).suffix,
@@ -61,8 +74,15 @@ class DocumentService:
 
         if meta_data:
             file_meta_data.update(meta_data)
+        logger.debug(f"File metadata: {file_meta_data}")
+        
+        # Detect language
+        logger.debug("Detecting document language")
+        language = self._detect_language(content)
+        logger.info(f"Detected language: {language}")
         
         # Create document
+        logger.info("Creating document in database")
         document_create = DocumentCreate(
             title=title,
             filename=os.path.basename(file_path),
@@ -71,55 +91,93 @@ class DocumentService:
             category=category,
             subcategory=subcategory,
             content=content,
-            language=self._detect_language(content),
+            language=language,
             meta_data=file_meta_data,
             hierarchy=hierarchy
         )
         
-        document = await self.repository.create_document(document_create)
-        logger.info(f"Created document: {document.id} - {document.title}")
+        try:
+            document = await self.repository.create_document(document_create)
+            logger.info(f"Created document: {document.id} - {document.title}")
+        except Exception as e:
+            logger.error(f"Failed to create document in database: {str(e)}")
+            raise
         
         # Chunk the document
-        chunk_config = self._get_chunk_config(document_type, chunking_config)
-        chunks_data = self.text_chunker.chunk_text(
-            content, 
-            strategy=chunk_strategy or chunk_config.get('strategy', 'recursive'),
-            meta_data={'document_id': document.id, 'document_type': document_type}
-        )
+        logger.info(f"Starting text chunking for document {document.id}")
+        chunk_config = self._get_chunk_config(document_type, self.chunking_config)
+        logger.debug(f"Using chunk config: {chunk_config}")
+        
+        try:
+            chunks_data = self.text_chunker.chunk_text(
+                content, 
+                strategy=chunk_strategy or chunk_config.get('strategy', 'recursive'),
+                meta_data={'document_id': document.id, 'document_type': document_type}
+            )
+            logger.info(f"Text chunking completed: {len(chunks_data)} chunks created")
+        except Exception as e:
+            logger.error(f"Failed to chunk text for document {document.id}: {str(e)}")
+            raise
         
         # Create chunks with embeddings
-        chunks = await self._create_chunks_with_embeddings(document.id, chunks_data)
-        logger.info(f"Created {len(chunks)} chunks for document {document.id}")
+        logger.info(f"Creating embeddings for {len(chunks_data)} chunks")
+        try:
+            chunks = await self._create_chunks_with_embeddings(document.id, chunks_data)
+            logger.info(f"Created {len(chunks)} chunks with embeddings for document {document.id}")
+        except Exception as e:
+            logger.error(f"Failed to create chunks with embeddings: {str(e)}")
+            raise
         
         # Create article links if provided
         if article_ids:
-            article_links = [
-                DocumentArticleLink(
-                    document_id=document.id,
-                    article_id=article_id,
-                    relevance_score=1.0
-                )
-                for article_id in article_ids
-            ]
-            await self.repository.add_article_links(article_links)
-            logger.info(f"Linked document {document.id} to {len(article_ids)} articles")
+            logger.info(f"Creating article links for {len(article_ids)} articles")
+            try:
+                article_links = [
+                    DocumentArticleLink(
+                        document_id=document.id,
+                        article_id=article_id,
+                        relevance_score=1.0
+                    )
+                    for article_id in article_ids
+                ]
+                await self.repository.add_article_links(article_links)
+                logger.info(f"Linked document {document.id} to {len(article_ids)} articles")
+            except Exception as e:
+                logger.error(f"Failed to create article links: {str(e)}")
+                raise
+        else:
+            logger.debug("No article links to create")
         
         # Create vehicle links if provided
         if vehicle_ids:
-            vehicle_links = [
-                DocumentVehicleLink(
-                    document_id=document.id,
-                    vehicle_id=vehicle_id,
-                    relevance_score=1.0
-                )
-                for vehicle_id in vehicle_ids
-            ]
-            await self.repository.add_vehicle_links(vehicle_links)
-            logger.info(f"Linked document {document.id} to {len(vehicle_ids)} vehicles")
+            logger.info(f"Creating vehicle links for {len(vehicle_ids)} vehicles")
+            try:
+                vehicle_links = [
+                    DocumentVehicleLink(
+                        document_id=document.id,
+                        vehicle_id=vehicle_id,
+                        relevance_score=1.0
+                    )
+                    for vehicle_id in vehicle_ids
+                ]
+                await self.repository.add_vehicle_links(vehicle_links)
+                logger.info(f"Linked document {document.id} to {len(vehicle_ids)} vehicles")
+            except Exception as e:
+                logger.error(f"Failed to create vehicle links: {str(e)}")
+                raise
+        else:
+            logger.debug("No vehicle links to create")
         
         # Mark document as processed
-        await self.repository.mark_document_processed(document.id)
+        logger.info(f"Marking document {document.id} as processed")
+        try:
+            await self.repository.mark_document_processed(document.id)
+            logger.info(f"Document {document.id} marked as processed successfully")
+        except Exception as e:
+            logger.error(f"Failed to mark document as processed: {str(e)}")
+            raise
         
+        logger.info(f"Successfully completed processing document {document.id} - {document.title}")
         return document, chunks
     
     async def process_directory(
@@ -139,6 +197,7 @@ class DocumentService:
         # Walk through directory
         for root, dirs, files in os.walk(directory_path):
             for file in files:
+                print(f"Processing file: {file}")
                 if not file.endswith(('.md', '.json', '.txt')):
                     continue
                 
