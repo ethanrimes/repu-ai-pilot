@@ -44,7 +44,7 @@ app.add_middleware(RateLimitMiddleware)
 app.add_middleware(LanguageDetectorMiddleware)
 
 # Include routers
-# app.include_router(health.router)
+app.include_router(health.router)
 app.include_router(auth.router, prefix="/api/v1")
 # app.include_router(chat.router, prefix="/api/v1")
 # app.include_router(documents.router, prefix="/api/v1")
