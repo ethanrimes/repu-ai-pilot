@@ -14,12 +14,12 @@ from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 print(f"Project root added to sys.path: {sys.path[-1]}")
 
-from backend.src.config.settings import get_settings
-from backend.src.infrastructure.integrations.supabase.supabase_config import get_supabase_client
-from backend.src.infrastructure.database.models.document import Base
-from backend.src.infrastructure.database.repositories.document_repo import DocumentRepository
-from backend.src.core.services.document_service import DocumentService
-from backend.src.core.models.document import DocumentType, DocumentCategory
+from src.config.settings import get_settings
+from src.infrastructure.integrations.supabase.supabase_config import get_supabase_client
+from src.infrastructure.database.models.document import Base
+from src.infrastructure.database.repositories.document_repo import DocumentRepository
+from src.core.services.document_service import DocumentService
+from src.core.models.document import DocumentType, DocumentCategory
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 

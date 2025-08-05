@@ -2,8 +2,8 @@
 
 from fastapi import Request, HTTPException, status
 from starlette.middleware.base import BaseHTTPMiddleware
-from backend.src.infrastructure.cache.cache_manager import get_cache_manager
-from backend.src.shared.utils.logger import get_logger
+from src.infrastructure.cache.cache_manager import get_cache_manager
+from src.shared.utils.logger import get_logger
 from typing import Optional
 import time
 import uuid
@@ -63,16 +63,16 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         key = f"rate_limit:{identifier}:{endpoint}"
         
         # Remove old entries
-        await self.cache.redis.zremrangebyscore(key, 0, window_start)
+        self.cache.redis.zremrangebyscore(key, 0, window_start)
         
         # Count requests in window
-        request_count = await self.cache.redis.zcard(key)
+        request_count = self.cache.redis.zcard(key)
         
         if request_count >= self.requests_per_minute:
             return False
         
         # Add current request
-        await self.cache.redis.zadd(key, {str(uuid.uuid4()): current_time})
-        await self.cache.redis.expire(key, self.window_seconds)
+        self.cache.redis.zadd(key, {str(uuid.uuid4()): current_time})
+        self.cache.redis.expire(key, self.window_seconds)
         
         return True

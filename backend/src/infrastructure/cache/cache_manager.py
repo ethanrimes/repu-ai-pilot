@@ -4,8 +4,8 @@ import json
 from typing import Optional, Any, Dict
 from datetime import timedelta
 from upstash_redis import Redis
-from backend.src.infrastructure.cache.upstash_config import get_redis_client
-from backend.src.shared.utils.logger import get_logger
+from src.infrastructure.cache.upstash_config import get_redis_client
+from src.shared.utils.logger import get_logger
 
 logger = get_logger(__name__)
 

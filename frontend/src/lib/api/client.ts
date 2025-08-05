@@ -1,11 +1,8 @@
-// frontend/src/lib/api/client.ts
-
-import axios from 'axios';
-import { auth } from '@/lib/firebase/client';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
-export const apiClient = axios.create({
+export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -14,16 +11,16 @@ export const apiClient = axios.create({
 
 // Request interceptor to add session token
 apiClient.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig) => {
     // Session ID is set by useSession hook
     // Just ensure we have it
     const sessionId = localStorage.getItem('session_id');
-    if (sessionId && !config.headers.Authorization) {
+    if (sessionId && config.headers) {
       config.headers.Authorization = `Bearer ${sessionId}`;
     }
     return config;
   },
-  (error) => {
+  (error: AxiosError) => {
     return Promise.reject(error);
   }
 );
@@ -31,8 +28,8 @@ apiClient.interceptors.request.use(
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+  async (error: AxiosError) => {
+    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
     // Handle 401 errors
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -45,7 +42,7 @@ apiClient.interceptors.response.use(
       } catch (refreshError) {
         // Refresh failed, redirect to login
         localStorage.removeItem('session_id');
-        window.location.href = '/login';
+        window.location.href = '/';
         return Promise.reject(refreshError);
       }
     }

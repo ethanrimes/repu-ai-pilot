@@ -3,9 +3,9 @@
 import uuid
 from typing import Optional, Dict, Any
 from datetime import datetime, timedelta
-from backend.src.infrastructure.cache.cache_manager import get_cache_manager
-from backend.src.core.models.company import Session, SessionCreate, SessionUpdate
-from backend.src.shared.utils.logger import get_logger
+from src.infrastructure.cache.cache_manager import get_cache_manager
+from src.core.models.company import Session, SessionCreate, SessionUpdate
+from src.shared.utils.logger import get_logger
 
 logger = get_logger(__name__)
 

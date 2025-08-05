@@ -9,7 +9,7 @@ from functools import lru_cache
 import asyncio
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-from backend.src.config.settings import get_settings
+from src.config.settings import get_settings
 
 settings = get_settings()
 

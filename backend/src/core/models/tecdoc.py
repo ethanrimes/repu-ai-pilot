@@ -355,10 +355,6 @@ class CountriesByLanguage(BaseModel):
     langId: int
     countries: List[Country]
 
-
-# Update forward references for recursive models
-ProductCategory.model_rebuild()
-
 # Export all models for easy import
 __all__ = [
     # Article models

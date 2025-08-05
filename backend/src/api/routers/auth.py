@@ -5,12 +5,12 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import Optional, Dict, Any
 from pydantic import BaseModel
 
-from backend.src.infrastructure.cache.session_manager import get_session_manager
-from backend.src.infrastructure.integrations.firebase.firebase_config import verify_token
-from backend.src.infrastructure.database.repositories.company_repo import CustomerRepository
-from backend.src.core.models.company import CustomerCreate
-from backend.src.api.dependencies import get_db
-from backend.src.shared.utils.logger import get_logger
+from src.infrastructure.cache.session_manager import get_session_manager
+from src.infrastructure.integrations.firebase.firebase_config import verify_token
+from src.infrastructure.database.repositories.company_repo import CustomerRepository
+from src.core.models.company import CustomerCreate
+from src.api.dependencies import get_db
+from src.shared.utils.logger import get_logger
 
 logger = get_logger(__name__)
 router = APIRouter(prefix="/auth", tags=["authentication"])

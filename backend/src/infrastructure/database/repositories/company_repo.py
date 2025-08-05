@@ -6,7 +6,7 @@ from datetime import datetime, date
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import and_, or_, func
 
-from backend.src.infrastructure.database.models.company import (
+from src.infrastructure.database.models.company import (
     Customer as CustomerDB,
     Order as OrderDB,
     OrderItem as OrderItemDB,
@@ -14,7 +14,7 @@ from backend.src.infrastructure.database.models.company import (
     Price as PriceDB,
     Session as SessionDB
 )
-from backend.src.core.models.company import (
+from src.core.models.company import (
     Customer, CustomerCreate, CustomerUpdate, CustomerSearch,
     Order, OrderCreate, OrderUpdate, OrderSearch, OrderItem, OrderItemCreate,
     Stock, StockCreate, StockUpdate, StockSearch,
