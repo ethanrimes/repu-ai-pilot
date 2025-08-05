@@ -28,10 +28,17 @@ export function LoginForm() {
       if (isSignUp) {
         // Create new user
         userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      } else {
+        
+        // Optionally update the user's display name
+        // if (name) {
+        //     await updateProfile(userCredential.user, {
+        //     displayName: name
+        //     });
+        // }
+        } else {
         // Sign in existing user
         userCredential = await signInWithEmailAndPassword(auth, email, password);
-      }
+    }
 
       // Get Firebase ID token
       const idToken = await userCredential.user.getIdToken();

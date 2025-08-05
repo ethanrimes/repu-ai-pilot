@@ -1,9 +1,10 @@
+# backend/src/main.py
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
-# Import dependencies
-from src.api.dependencies import get_db
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 # Import session manager
 from src.infrastructure.cache.session_manager import SessionManager
@@ -18,6 +19,9 @@ from src.api.middleware.language_detector import LanguageDetectorMiddleware
 
 # Import settings
 from src.config.settings import get_settings
+from src.shared.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 # Create FastAPI app
 app = FastAPI(
@@ -28,6 +32,10 @@ app = FastAPI(
 
 # Get settings
 settings = get_settings()
+
+# Create database engine for background tasks
+engine = create_engine(settings.database_url)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Configure CORS
 app.add_middleware(
@@ -55,21 +63,32 @@ scheduler = AsyncIOScheduler()
 @scheduler.scheduled_job('interval', hours=6)
 async def cleanup_sessions_job():
     """Run session cleanup every 6 hours"""
-    async with get_db() as db:
+    logger.info("Starting scheduled session cleanup...")
+    
+    # Create a new database session for the background task
+    db = SessionLocal()
+    try:
         session_manager = SessionManager(db)
-        await session_manager.cleanup_expired_sessions()
+        count = await session_manager.cleanup_expired_sessions()
+        logger.info(f"Session cleanup completed: {count} sessions cleaned")
+    except Exception as e:
+        logger.error(f"Error in session cleanup job: {e}")
+    finally:
+        db.close()
 
 # Start scheduler on app startup
 @app.on_event("startup")
 async def startup_event():
     scheduler.start()
-    print("✅ Scheduler started - session cleanup every 6 hours")
+    logger.info("✅ Application started")
+    logger.info("✅ Scheduler started - session cleanup every 6 hours")
 
 @app.on_event("shutdown")
 async def shutdown_event():
     scheduler.shutdown()
-    print("🛑 Scheduler stopped")
+    logger.info("🛑 Scheduler stopped")
+    logger.info("🛑 Application shutdown")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)

@@ -109,7 +109,7 @@ class CustomerBase(BaseModel):
     email: EmailStr
     phone: Optional[str] = Field(None, pattern="^\\+?[0-9\\s-]+$", max_length=20)
     whatsapp_number: Optional[str] = Field(None, pattern="^\\+?[0-9]+$", max_length=20)
-    name: str = Field(..., min_length=1, max_length=255)
+    name: Optional[str] = Field(None, max_length=255)
     company_name: Optional[str] = Field(None, max_length=255)
     customer_type: CustomerType = Field(default=CustomerType.RETAIL)
     tax_id: Optional[str] = Field(None, max_length=50)
@@ -125,7 +125,7 @@ class CustomerUpdate(BaseModel):
     """Model for updating customer"""
     phone: Optional[str] = Field(None, pattern="^\\+?[0-9\\s-]+$", max_length=20)
     whatsapp_number: Optional[str] = Field(None, pattern="^\\+?[0-9]+$", max_length=20)
-    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    name: Optional[str] = Field(None, max_length=255)
     company_name: Optional[str] = Field(None, max_length=255)
     address: Optional[str] = None
     city: Optional[str] = Field(None, max_length=100)
