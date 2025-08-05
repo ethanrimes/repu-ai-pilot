@@ -48,7 +48,7 @@ class Customer(Base):
     email = Column(String(255), unique=True, nullable=False, index=True)
     phone = Column(String(20))
     whatsapp_number = Column(String(20))
-    name = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=True)
     company_name = Column(String(255))
     customer_type = Column(String(20), default='retail', index=True)  # retail, wholesale, mechanic
     tax_id = Column(String(50))  # NIT/CC

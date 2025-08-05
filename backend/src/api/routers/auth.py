@@ -2,10 +2,11 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session as DBSession
 from typing import Optional, Dict, Any
 from pydantic import BaseModel
 
-from src.infrastructure.cache.session_manager import get_session_manager
+from src.infrastructure.cache.session_manager import get_session_manager, SessionManager
 from src.infrastructure.integrations.firebase.firebase_config import verify_token
 from src.infrastructure.database.repositories.company_repo import CustomerRepository
 from src.core.models.company import CustomerCreate
@@ -25,7 +26,7 @@ class LoginResponse(BaseModel):
     session_id: str
     user_id: int
     email: str
-    name: str
+    name: Optional[str]
     expires_in: int
 
 class SessionResponse(BaseModel):
@@ -38,10 +39,11 @@ class SessionResponse(BaseModel):
 
 # Dependencies
 async def get_current_session(
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: DBSession = Depends(get_db)
 ) -> Dict[str, Any]:
     """Validate session from Bearer token"""
-    session_manager = get_session_manager()
+    session_manager = get_session_manager(db)
     session_data = await session_manager.validate_session(credentials.credentials)
     
     if not session_data:
@@ -54,7 +56,7 @@ async def get_current_session(
 
 async def get_current_user(
     session: Dict[str, Any] = Depends(get_current_session),
-    db = Depends(get_db)
+    db: DBSession = Depends(get_db)
 ) -> Dict[str, Any]:
     """Get current user from session"""
     customer_repo = CustomerRepository(db)
@@ -77,7 +79,7 @@ async def get_current_user(
 @router.post("/login", response_model=LoginResponse)
 async def login(
     request: LoginRequest,
-    db = Depends(get_db)
+    db: DBSession = Depends(get_db)
 ):
     """Login with Firebase token and create session"""
     try:
@@ -86,6 +88,10 @@ async def login(
         firebase_uid = decoded_token["uid"]
         email = decoded_token.get("email", "")
         name = decoded_token.get("name", "")
+        
+        # Handle empty name - set to None if empty string
+        if not name or name.strip() == "":
+            name = None
         
     except Exception as e:
         logger.error(f"Firebase token verification failed: {e}")
@@ -108,8 +114,8 @@ async def login(
         user = await customer_repo.create(user_create)
         logger.info(f"Created new user: {user.id}")
     
-    # Create session
-    session_manager = get_session_manager()
+    # Create session with database support
+    session_manager = get_session_manager(db)
     session_info = await session_manager.create_session(
         user_id=user.id,
         firebase_uid=firebase_uid,
@@ -126,10 +132,11 @@ async def login(
 
 @router.post("/logout")
 async def logout(
-    session: Dict[str, Any] = Depends(get_current_session)
+    session: Dict[str, Any] = Depends(get_current_session),
+    db: DBSession = Depends(get_db)
 ):
     """Logout and end session"""
-    session_manager = get_session_manager()
+    session_manager = get_session_manager(db)
     success = await session_manager.end_session(session["session_id"])
     
     if not success:
@@ -149,10 +156,11 @@ async def get_session(
 
 @router.post("/refresh")
 async def refresh_session(
-    session: Dict[str, Any] = Depends(get_current_session)
+    session: Dict[str, Any] = Depends(get_current_session),
+    db: DBSession = Depends(get_db)
 ):
     """Refresh session TTL"""
-    session_manager = get_session_manager()
+    session_manager = get_session_manager(db)
     session_key = session_manager.cache.session_key(session["session_id"])
     
     # Refresh TTL
@@ -169,3 +177,14 @@ async def get_current_user_info(
 ):
     """Get current user information"""
     return user
+
+# Admin endpoint for manual session cleanup
+@router.post("/cleanup-sessions", include_in_schema=False)
+async def cleanup_expired_sessions(
+    db: DBSession = Depends(get_db),
+    # Add admin authentication here if needed
+):
+    """Manual session cleanup (for admin use or cron job)"""
+    session_manager = get_session_manager(db)
+    count = await session_manager.cleanup_expired_sessions()
+    return {"cleaned_up": count, "message": f"Cleaned up {count} expired sessions"}

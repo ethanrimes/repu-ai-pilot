@@ -3,19 +3,31 @@
 import uuid
 from typing import Optional, Dict, Any
 from datetime import datetime, timedelta
+from sqlalchemy.orm import Session as DBSession
+
 from src.infrastructure.cache.cache_manager import get_cache_manager
-from src.core.models.company import Session, SessionCreate, SessionUpdate
+from src.infrastructure.database.repositories.company_repo import SessionRepository
+from src.core.models.company import Session, SessionCreate, SessionUpdate, Channel
 from src.shared.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 class SessionManager:
-    """Manage user sessions in Redis"""
+    """Manage user sessions in Redis and PostgreSQL"""
     
-    def __init__(self):
+    def __init__(self, db: Optional[DBSession] = None):
         self.cache = get_cache_manager()
         self.session_ttl = 86400  # 24 hours
         self.refresh_threshold = 3600  # Refresh if less than 1 hour left
+        self.db = db
+        self._session_repo = None
+    
+    @property
+    def session_repo(self) -> Optional[SessionRepository]:
+        """Lazy load session repository"""
+        if self._session_repo is None and self.db is not None:
+            self._session_repo = SessionRepository(self.db)
+        return self._session_repo
     
     async def create_session(
         self,
@@ -46,20 +58,26 @@ class SessionManager:
         await self.cache.hset(user_sessions_key, session_id, datetime.utcnow().isoformat())
         await self.cache.expire(user_sessions_key, self.session_ttl)
         
-        # Store in PostgreSQL for audit/history
+        # Store in PostgreSQL for audit/history if repository is available
         if self.session_repo:
             try:
+                # Convert channel string to Channel enum
+                channel_enum = Channel(channel) if channel in [e.value for e in Channel] else Channel.WEB
+                
                 session_create = SessionCreate(
                     session_id=session_id,
                     customer_id=user_id,
-                    channel=channel,
+                    channel=channel_enum,
                     current_state="active",
                     context={"firebase_uid": firebase_uid, **(meta_data or {})}
                 )
                 await self.session_repo.create(session_create)
+                logger.info(f"Session {session_id} created in PostgreSQL")
             except Exception as e:
                 logger.error(f"Failed to create session in PostgreSQL: {e}")
                 # Don't fail the session creation if DB write fails
+        else:
+            logger.debug("No session repository available, skipping PostgreSQL storage")
         
         logger.info(f"Created session {session_id} for user {user_id}")
         
@@ -70,7 +88,7 @@ class SessionManager:
         }
     
     async def get_session(self, session_id: str) -> Optional[Dict[str, Any]]:
-        """Get session data"""
+        """Get session data from Redis"""
         session_key = self.cache.session_key(session_id)
         session_data = await self.cache.get(session_key)
         
@@ -84,6 +102,16 @@ class SessionManager:
             if ttl < self.refresh_threshold:
                 await self.cache.expire(session_key, self.session_ttl)
                 logger.debug(f"Refreshed TTL for session {session_id}")
+            
+            # Also update in PostgreSQL if available
+            if self.session_repo:
+                try:
+                    await self.session_repo.update(
+                        session_id,
+                        SessionUpdate(current_state="active")
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to update session in PostgreSQL: {e}")
         
         return session_data
     
@@ -111,7 +139,21 @@ class SessionManager:
         
         # Save back to Redis
         session_key = self.cache.session_key(session_id)
-        return await self.cache.set(session_key, session_data, self.session_ttl)
+        success = await self.cache.set(session_key, session_data, self.session_ttl)
+        
+        # Update in PostgreSQL if available
+        if success and self.session_repo:
+            try:
+                session_update = SessionUpdate(
+                    current_state=updates.get("current_state"),
+                    intent=updates.get("intent"),
+                    context=updates.get("context")
+                )
+                await self.session_repo.update(session_id, session_update)
+            except Exception as e:
+                logger.error(f"Failed to update session in PostgreSQL: {e}")
+        
+        return success
     
     async def end_session(self, session_id: str) -> bool:
         """End a session in both Redis and PostgreSQL"""
@@ -133,6 +175,7 @@ class SessionManager:
         if self.session_repo:
             try:
                 await self.session_repo.end_session(session_id)
+                logger.info(f"Session {session_id} ended in PostgreSQL")
             except Exception as e:
                 logger.error(f"Failed to end session in PostgreSQL: {e}")
         
@@ -140,7 +183,7 @@ class SessionManager:
         return True
     
     async def get_user_sessions(self, user_id: int) -> Dict[str, str]:
-        """Get all sessions for a user"""
+        """Get all sessions for a user from Redis"""
         user_sessions_key = f"user_sessions:{user_id}"
         return await self.cache.hgetall(user_sessions_key)
     
@@ -159,13 +202,44 @@ class SessionManager:
         
         logger.info(f"Ended {count} sessions for user {user_id}")
         return count
+    
+    async def cleanup_expired_sessions(self) -> int:
+        """Clean up expired sessions from PostgreSQL"""
+        if not self.session_repo:
+            logger.warning("No session repository available for cleanup")
+            return 0
+        
+        try:
+            # Get all active sessions from PostgreSQL
+            active_sessions = await self.session_repo.get_active_sessions()
+            cleaned_count = 0
+            
+            for session in active_sessions:
+                # Check if session exists in Redis
+                session_key = self.cache.session_key(session.session_id)
+                exists = await self.cache.exists(session_key)
+                
+                if not exists:
+                    # Session expired in Redis, mark as ended in PostgreSQL
+                    await self.session_repo.end_session(session.session_id)
+                    cleaned_count += 1
+            
+            logger.info(f"Cleaned up {cleaned_count} expired sessions")
+            return cleaned_count
+            
+        except Exception as e:
+            logger.error(f"Error during session cleanup: {e}")
+            return 0
 
-# Singleton instance
-_session_manager: Optional[SessionManager] = None
+# Singleton instance management
+_session_managers: Dict[int, SessionManager] = {}
 
-def get_session_manager() -> SessionManager:
-    """Get singleton session manager instance"""
-    global _session_manager
-    if _session_manager is None:
-        _session_manager = SessionManager()
-    return _session_manager
+def get_session_manager(db: Optional[DBSession] = None) -> SessionManager:
+    """Get session manager instance, optionally with database session"""
+    # If no db provided, return a manager without PostgreSQL support
+    if db is None:
+        return SessionManager(None)
+    
+    # Create a new manager with the provided db session
+    # We don't cache these because each request might have a different db session
+    return SessionManager(db)
