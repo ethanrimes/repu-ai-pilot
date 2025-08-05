@@ -1,180 +1,411 @@
-# backend/api/models/schemas/tecdoc.py
-"""TecDoc API response schemas using Pydantic
-Path: backend/api/models/schemas/tecdoc.py
-"""
+"""TecDoc API Pydantic Schemas - Comprehensive models for all API responses"""
 
-from pydantic import BaseModel, Field, ConfigDict
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional, Union
 from datetime import date
+from pydantic import BaseModel, Field, RootModel
 
-class Manufacturer(BaseModel):
-    """TecDoc Manufacturer schema"""
-    model_config = ConfigDict(populate_by_name=True)
-    
-    mfaId: int = Field(alias="mfaId")
-    brand: str = Field(alias="mfaBrand")
-    is_cv: bool = Field(alias="mfaCv")  # Commercial vehicles
-    is_dc: bool = Field(alias="mfaDc")
-    is_eng: bool = Field(alias="mfaEng")
-    is_mtb: bool = Field(alias="mfaMtb")  # Motorbike
-    is_pc: bool = Field(alias="mfaPc")  # Passenger cars
-    match_code: str = Field(alias="mfaMatchCode")
-    models_count: int = Field(alias="mfaModelsCount")
-    # Additional fields from response
-    is_vgl: Optional[bool] = Field(default=None, alias="mfaVgl")
-    is_axl: Optional[bool] = Field(default=None, alias="mfaAxl")
-    pc_ctm: Optional[int] = Field(default=None, alias="mfaPcCtm")
-    cv_ctm: Optional[int] = Field(default=None, alias="mfaCvCtm")
 
-class VehicleType(BaseModel):
-    """TecDoc Vehicle Type schema"""
-    id: int
-    vehicle_type: str = Field(alias="vehicleType")
+# Base models for common structures
+class ArticleMediaInfo(BaseModel):
+    articleMediaType: int
+    articleMediaFileName: str
+    articleMediaSupplierId: Optional[int] = None
+    mediaInformation: Optional[str] = None
 
-class VehicleDetails(BaseModel):
-    """TecDoc Vehicle Details schema"""
-    model_config = ConfigDict(populate_by_name=True)
-    
-    brand: str
-    model_type: str = Field(alias="modelType")
-    type_engine: str = Field(alias="typeEngine")
-    construction_start: str = Field(alias="constructionIntervalStart")
-    construction_end: str = Field(alias="constructionIntervalEnd")
-    power_kw: Optional[float] = Field(alias="powerKw")
-    power_ps: Optional[float] = Field(alias="powerPs")
-    capacity_tax: Optional[float] = Field(default=None, alias="capacityTax")
-    capacity_lt: Optional[float] = Field(alias="capacityLt")
-    capacity_tech: Optional[float] = Field(alias="capacityTech")
-    cylinders: Optional[int] = Field(alias="numberOfCylinders")
-    valves: Optional[int] = Field(alias="numberOfValves")
-    body_type: Optional[str] = Field(alias="bodyType")
-    engine_type: Optional[str] = Field(alias="engineType")
-    gear_type: Optional[str] = Field(default=None, alias="gearType")
-    drive_type: Optional[str] = Field(alias="driveType")
-    brake_system: Optional[str] = Field(default=None, alias="brakeSystem")
-    brake_type: Optional[str] = Field(default=None, alias="brakeType")
-    fuel_type: Optional[str] = Field(alias="fuelType")
-    catalysator_type: Optional[str] = Field(default=None, alias="catalysatorType")
-    fuel_mixture: Optional[str] = Field(default=None, alias="fuelMixture")
-    engine_codes: Optional[str] = Field(alias="engCodes")
-    abs: Optional[Any] = Field(default=None)
-    asr: Optional[Any] = Field(default=None)
-
-class Vehicle(BaseModel):
-    """TecDoc Vehicle schema"""
-    model_config = ConfigDict(populate_by_name=True)
-    
-    vehicle_type_details: VehicleDetails = Field(alias="vehicleTypeDetails")
-
-class Model(BaseModel):
-    """TecDoc Model schema"""
-    model_config = ConfigDict(populate_by_name=True)
-    
-    model_id: int = Field(alias="modelId")
-    model_name: str = Field(alias="modelName")
-
-class ProductCategory(BaseModel):
-    """TecDoc Product Category schema - single category"""
-    text: str
-    children: Optional[Dict[str, 'ProductCategory']] = Field(default_factory=dict)
-
-class ProductCategoriesResponse(BaseModel):
-    """Response containing all product categories"""
-    categories: Dict[str, ProductCategory]
-
-class Supplier(BaseModel):
-    """TecDoc Supplier schema"""
-    model_config = ConfigDict(populate_by_name=True)
-    
-    sup_id: str = Field(alias="supId")
-    brand: str = Field(alias="supBrand")
-    match_code: str = Field(alias="supMatchCode")
-    logo_name: Optional[str] = Field(alias="supLogoName")
 
 class ArticleSpecification(BaseModel):
-    """Article specification details"""
-    model_config = ConfigDict(populate_by_name=True)
-    
-    criteria_name: str = Field(alias="criteriaName")
-    criteria_value: Optional[str] = Field(alias="criteriaValue")
+    criteriaName: str
+    criteriaValue: str
 
-class OEMNumber(BaseModel):
-    """OEM Number mapping"""
-    model_config = ConfigDict(populate_by_name=True)
-    
-    oem_brand: str = Field(alias="oemBrand")
-    oem_display_no: str = Field(alias="oemDisplayNo")
+
+class EanNumbers(BaseModel):
+    eanNumbers: str
+
+
+class OemNumber(BaseModel):
+    oemBrand: str
+    oemDisplayNo: str
+
 
 class CompatibleCar(BaseModel):
-    """Compatible vehicle for an article"""
-    model_config = ConfigDict(populate_by_name=True)
-    
-    vehicle_id: int = Field(alias="vehicleId")
-    model_id: int = Field(alias="modelId")
-    manufacturer_name: str = Field(alias="manufacturerName")
-    model_name: str = Field(alias="modelName")
-    type_engine_name: str = Field(alias="typeEngineName")
-    construction_start: str = Field(alias="constructionIntervalStart")
-    construction_end: str = Field(alias="constructionIntervalEnd")
+    vehicleId: int
+    modelId: int
+    manufacturerName: str
+    modelName: str
+    typeEngineName: str
+    constructionIntervalStart: str
+    constructionIntervalEnd: Optional[str] = None
+
 
 class ArticleInfo(BaseModel):
-    """Article info nested object"""
-    model_config = ConfigDict(populate_by_name=True)
-    
-    article_id: int = Field(alias="articleId")
-    article_no: str = Field(alias="articleNo")
-    supplier_id: int = Field(alias="supplierId")
-    supplier_name: str = Field(alias="supplierName")
-    is_accessory: Optional[bool] = Field(alias="isAccessory")
-    article_product_name: str = Field(alias="articleProductName")
+    articleId: int
+    articleNo: str
+    supplierId: int
+    supplierName: str
+    isAccessory: int
+    articleProductName: str
 
-class EANNumbers(BaseModel):
-    """EAN numbers wrapper"""
-    model_config = ConfigDict(populate_by_name=True)
-    
-    ean_numbers: str = Field(alias="eanNumbers")
 
-class Article(BaseModel):
-    """TecDoc Article schema"""
-    model_config = ConfigDict(populate_by_name=True)
-    
-    article_id: int = Field(alias="articleId")
-    article_no: str = Field(alias="articleNo")
-    supplier_name: str = Field(alias="supplierName")
-    supplier_id: int = Field(alias="supplierId")
-    article_product_name: str = Field(alias="articleProductName")
-    product_id: Optional[int] = Field(default=None, alias="productId")
-    
-    # Media fields
-    article_media_type: Optional[int] = Field(default=None, alias="articleMediaType")
-    article_media_file_name: Optional[str] = Field(default=None, alias="articleMediaFileName")
-    
-    # Nested objects
-    article_info: Optional[ArticleInfo] = Field(default=None, alias="articleInfo")
-    all_specifications: Optional[List[ArticleSpecification]] = Field(default_factory=list, alias="allSpecifications")
-    ean_no: Optional[EANNumbers] = Field(default=None, alias="eanNo")
-    oem_no: Optional[List[OEMNumber]] = Field(default_factory=list, alias="oemNo")
-    
-    # Image links
-    image_link: Optional[str] = Field(default=None, alias="imageLink")
-    image_media: Optional[str] = Field(default=None, alias="imageMedia")
-    s3_image_link: Optional[str] = Field(default=None, alias="s3ImageLink")
-    
-    # Compatible vehicles
-    compatible_cars: Optional[List[CompatibleCar]] = Field(default_factory=list, alias="compatibleCars")
+class ArticleBase(BaseModel):
+    articleId: int
+    articleNo: str
+    articleProductName: str
+    supplierName: str
+    supplierId: int
+    articleMediaType: int
+    articleMediaFileName: str
+    imageLink: str
+    imageMedia: str
+    s3ImageLink: str
 
-class ArticleResponse(BaseModel):
-    """Wrapper for single article response"""
-    article: Article
 
-class ArticleSearchResponse(BaseModel):
-    """Response for article search by vehicle and product group"""
-    model_config = ConfigDict(populate_by_name=True)
-    
-    vehicle_id: int = Field(alias="vehicleId")
-    product_group_id: int = Field(alias="productGroupId")
-    count_articles: int = Field(alias="countArticles")
-    articles: List[Article]
+class ArticleExtended(ArticleBase):
+    articleInfo: ArticleInfo
+    allSpecifications: List[ArticleSpecification]
+    eanNo: Optional[EanNumbers] = None
+    oemNo: Optional[List[OemNumber]] = None
+    compatibleCars: Optional[List[CompatibleCar]] = None
+
+
+# Article search responses
+class ArticleSearchResult(BaseModel):
+    articleId: int
+    articleNo: str
+    articleProductName: str
+    supplierName: str
+    supplierId: int
+    articleMediaType: int
+    articleMediaFileName: str
+    imageLink: str
+    imageMedia: str
+    s3ImageLink: str
+
+
+class ArticleSearch(BaseModel):
+    articleSearchNr: str
+    countArticles: int
+    articles: List[ArticleSearchResult]
+
+
+class ArticleSearchWithSupplier(ArticleSearch):
+    pass  # Same structure as ArticleSearch
+
+
+# Article media info response (root is array)
+class ArticleMediaInfoList(RootModel[List[ArticleMediaInfo]]):
+    root: List[ArticleMediaInfo]
+
+
+# Article number details response
+class ArticleNumberDetailsArticle(ArticleExtended):
+    pass
+
+
+class ArticleNumberDetails(BaseModel):
+    articleNo: str
+    countArticles: int
+    articles: List[ArticleNumberDetailsArticle]
+
+
+# Article specification details response
+class ArticleSpecificationDetails(BaseModel):
+    articleId: str
+    article: ArticleInfo
+    articleAllSpecifications: List[ArticleSpecification]
+    articleEanNo: Optional[EanNumbers] = None
+    articleOemNo: Optional[List[OemNumber]] = None
+
+
+# Article complete details response
+class ArticleCompleteDetailsArticle(ArticleExtended):
+    pass
+
+
+class ArticleCompleteDetails(BaseModel):
+    article: ArticleCompleteDetailsArticle
+
+
+# Articles list response
+class ArticleListItem(BaseModel):
+    articleId: int
+    articleNo: str
+    supplierName: str
+    supplierId: int
+    articleProductName: str
+    productId: int
+    articleMediaType: int
+    articleMediaFileName: str
+    imageLink: str
+    imageMedia: str
+    s3ImageLink: str
+
+
+class ArticlesList(BaseModel):
+    vehicleId: int
+    productGroupId: int
+    countArticles: int
+    articles: List[ArticleListItem]
+
+
+# Category V1 response
+class CategoryV1Item(BaseModel):
+    level: int
+    levelText_1: str
+    levelId_1: str
+    levelText_2: Optional[str] = None
+    levelId_2: Optional[str] = None
+    levelText_3: Optional[str] = None
+    levelId_3: Optional[str] = None
+    levelText_4: Optional[str] = None
+    levelId_4: Optional[str] = None
+
+
+class CategoryV1(BaseModel):
+    categories: List[CategoryV1Item]
+
+
+# Category V2 response - dynamic nested structure
+class CategoryV2Node(BaseModel):
+    categoryId: int
+    categoryName: str
+    level: int
+    children: Dict[str, 'CategoryV2Node'] = Field(default_factory=dict)
+
+
+class CategoryV2(BaseModel):
+    categories: Dict[str, CategoryV2Node]
+
+
+# Category V3 response - dynamic nested structure with different format
+class CategoryV3Children(BaseModel):
+    text: str
+    children: Union[Dict[str, 'CategoryV3Children'], List[Any]] = Field(default_factory=list)
+
+
+class CategoryV3(BaseModel):
+    categories: Dict[str, CategoryV3Children]
+
+
+# Update forward references for recursive models
+CategoryV2Node.model_rebuild()
+CategoryV3Children.model_rebuild()
+
+
+# Vehicle engine types response
+class VehicleEngineType(BaseModel):
+    vehicleId: int
+    manufacturerName: str
+    modelName: str
+    typeEngineName: str
+    constructionIntervalStart: str
+    constructionIntervalEnd: Optional[str] = None
+    powerKw: str
+    powerPs: str
+    capacityTax: Optional[str] = None
+    fuelType: str
+    bodyType: str
+    numberOfCylinders: int
+    capacityLt: str
+    capacityTech: str
+    engineCodes: str
+
+
+class VehicleEngineTypes(BaseModel):
+    modelType: str
+    countModelTypes: int
+    modelTypes: List[VehicleEngineType]
+
+
+# Vehicle type details response
+class VehicleTypeDetailsInfo(BaseModel):
+    brand: str
+    modelType: str
+    typeEngine: str
+    constructionIntervalStart: str
+    constructionIntervalEnd: Optional[str] = None
+    powerKw: str
+    powerPs: str
+    capacityTax: Optional[str] = None
+    capacityLt: str
+    capacityTech: str
+    abs: Optional[str] = None
+    asr: Optional[str] = None
+    numberOfCylinders: int
+    numberOfValves: int
+    bodyType: str
+    engineType: str
+    gearType: Optional[str] = None
+    driveType: str
+    brakeSystem: Optional[str] = None
+    brakeType: Optional[str] = None
+    fuelType: str
+    catalysatorType: str
+    fuelMixture: str
+    engCodes: str
+
+
+class VehicleTypeDetails(BaseModel):
+    vehicleTypeDetails: VehicleTypeDetailsInfo
+
+
+# Model details responses
+class ModelDetails(BaseModel):
+    modelId: int
+    modelName: str
+
+
+class ModelDetailsByVehicle(ModelDetails):
+    pass  # Same structure
+
+
+# Models list response
+class ModelListItem(BaseModel):
+    modelId: int
+    modelName: str
+    modelYearFrom: str
+    modelYearTo: Optional[str] = None
+
+
+class ModelsList(BaseModel):
+    countModels: int
+    models: List[ModelListItem]
+
+
+# Manufacturer details response
+class ManufacturerDetails(BaseModel):
+    mfaId: int
+    mfaBrand: str
+    mfaCv: bool
+    mfaDc: bool
+    mfaEng: bool
+    mfaMtb: bool
+    mfaPc: bool
+    mfaVgl: bool
+    mfaAxl: bool
+    mfaMatchCode: str
+    mfaModelsCount: int
+    mfaPcCtm: int
+    mfaCvCtm: int
+
+
+# Manufacturers list response
+class ManufacturerListItem(BaseModel):
+    manufacturerId: int
+    brand: str
+
+
+class ManufacturersList(BaseModel):
+    countManufactures: int
+    manufacturers: List[ManufacturerListItem]
+
+
+# Suppliers list response (root is array)
+class Supplier(BaseModel):
+    supId: str
+    supBrand: str
+    supMatchCode: str
+    supLogoName: str
+
+
+class SuppliersList(RootModel[List[Supplier]]):
+    root: List[Supplier]
+
+
+# Vehicle types list response (root is array)
+class VehicleType(BaseModel):
+    id: int
+    vehicleType: str
+
+
+class VehicleTypesList(RootModel[List[VehicleType]]):
+    root: List[VehicleType]
+
+
+# Language models (inferred from API structure)
+class Language(BaseModel):
+    langId: int
+    langName: str
+    langCode: str
+
+
+class LanguagesList(BaseModel):
+    languages: List[Language]
+
+
+class LanguageDetails(BaseModel):
+    language: Language
+
+
+# Country models (inferred from API structure)
+class Country(BaseModel):
+    countryId: int
+    countryName: str
+    countryCode: str
+
+
+class CountriesList(BaseModel):
+    countries: List[Country]
+
+
+class CountryDetails(BaseModel):
+    country: Country
+
+
+class CountriesByLanguage(BaseModel):
+    langId: int
+    countries: List[Country]
+
 
 # Update forward references for recursive models
 ProductCategory.model_rebuild()
+
+# Export all models for easy import
+__all__ = [
+    # Article models
+    'ArticleSearch',
+    'ArticleSearchWithSupplier',
+    'ArticleMediaInfoList',
+    'ArticleNumberDetails',
+    'ArticleSpecificationDetails',
+    'ArticleCompleteDetails',
+    'ArticlesList',
+    
+    # Category models
+    'CategoryV1',
+    'CategoryV2',
+    'CategoryV3',
+    
+    # Vehicle models
+    'VehicleEngineTypes',
+    'VehicleTypeDetails',
+    'ModelDetails',
+    'ModelDetailsByVehicle',
+    'ModelsList',
+    
+    # Manufacturer models
+    'ManufacturerDetails',
+    'ManufacturersList',
+    
+    # Supplier models
+    'SuppliersList',
+    
+    # Vehicle type models
+    'VehicleTypesList',
+    
+    # Language models
+    'LanguagesList',
+    'LanguageDetails',
+    
+    # Country models
+    'CountriesList',
+    'CountryDetails',
+    'CountriesByLanguage',
+    
+    # Base models (for type hints)
+    'ArticleInfo',
+    'ArticleSpecification',
+    'CompatibleCar',
+    'OemNumber',
+    'EanNumbers',
+]
+

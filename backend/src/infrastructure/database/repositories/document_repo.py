@@ -248,59 +248,45 @@ class DocumentRepository:
         logger.debug(f"Creating {len(chunks)} chunks in bulk")
         
         try:
-            db_chunks = [ChunkDB(**chunk.model_dump()) for chunk in chunks]
+            # Create chunk instances
+            db_chunks = []
+            for chunk in chunks:
+                db_chunk = ChunkDB(**chunk.model_dump())
+                db_chunks.append(db_chunk)
             
-            self.db.bulk_save_objects(db_chunks, return_defaults=True)
+            # Use add_all instead of bulk_save_objects for better ORM integration
+            self.db.add_all(db_chunks)
             self.db.commit()
             
+            # Refresh each chunk to get the created_at and other defaults
+            for db_chunk in db_chunks:
+                self.db.refresh(db_chunk)
+            
             logger.info(f"Created {len(db_chunks)} chunks successfully")
-            return [Chunk.model_validate(chunk) for chunk in db_chunks]
+            
+            # Now validate without including the document relationship
+            result_chunks = []
+            for db_chunk in db_chunks:
+                # Create a dict excluding the relationship
+                chunk_dict = {
+                    'id': db_chunk.id,
+                    'document_id': db_chunk.document_id,
+                    'content': db_chunk.content,
+                    'chunk_index': db_chunk.chunk_index,
+                    'meta_data': db_chunk.meta_data,
+                    'tokens': db_chunk.tokens,
+                    'chunk_strategy': db_chunk.chunk_strategy,
+                    'embedding': db_chunk.embedding,
+                    'created_at': db_chunk.created_at
+                }
+                result_chunks.append(Chunk.model_validate(chunk_dict))
+            
+            return result_chunks
+            
         except Exception as e:
             logger.error(f"Error creating chunks in bulk: {e}", exc_info=True)
             self.db.rollback()
             raise
-    
-    async def vector_search(self, params: VectorSearchParams) -> List[SearchResult]:
-        """Perform vector similarity search"""
-        logger.debug(f"Performing vector search with threshold {params.similarity_threshold}")
-        
-        if not params.embedding:
-            logger.error("No embedding provided for vector search")
-            raise ValueError("Embedding is required for vector search")
-        
-        # Base query
-        query = self.db.query(
-            ChunkDB,
-            DocumentDB,
-            func.cosine_distance(ChunkDB.embedding, params.embedding).label('distance')
-        ).join(DocumentDB)
-        
-        # Apply meta_data filters
-        if params.filters:
-            logger.debug(f"Applying filters: {params.filters}")
-            for key, value in params.filters.items():
-                query = query.filter(
-                    ChunkDB.meta_data[key].astext == str(value)
-                )
-        
-        # Order by similarity and limit
-        results = query.order_by('distance').limit(params.limit).all()
-        logger.debug(f"Found {len(results)} results")
-        
-        # Convert to search results
-        search_results = []
-        for chunk, document, distance in results:
-            similarity_score = 1 - distance  # Convert distance to similarity
-            
-            if similarity_score >= params.similarity_threshold:
-                search_results.append(SearchResult(
-                    chunk=Chunk.model_validate(chunk),
-                    document=Document.model_validate(document),
-                    similarity_score=similarity_score
-                ))
-        
-        logger.debug(f"Returning {len(search_results)} results above threshold")
-        return search_results
     
     async def hybrid_search(self, query_text: str, query_embedding: List[float], 
                            limit: int = 5, keyword_weight: float = 0.3) -> List[SearchResult]:

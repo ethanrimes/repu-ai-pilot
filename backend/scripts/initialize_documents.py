@@ -347,17 +347,17 @@ async def main():
         print("\n✅ Document processing complete!")
         
         # Create summary report
-        summary_path = "document_processing_summary.json"
-        summary_data = {
-            **results,
-            'timestamp': datetime.now().isoformat(),
-            'data_path': UNSTRUCTURED_DATA_PATH,
-            'total_files_configured': len(file_processors)
-        }
+        # summary_path = "document_processing_summary.json"
+        # summary_data = {
+        #     **results,
+        #     'timestamp': datetime.now().isoformat(),
+        #     'data_path': UNSTRUCTURED_DATA_PATH,
+        #     'total_files_configured': len(file_processors)
+        # }
         
-        with open(summary_path, 'w') as f:
-            json.dump(summary_data, f, indent=2)
-        print(f"\n📝 Summary report saved to: {summary_path}")
+        # with open(summary_path, 'w') as f:
+        #     json.dump(summary_data, f, indent=2)
+        # print(f"\n📝 Summary report saved to: {summary_path}")
 
 if __name__ == "__main__":
     asyncio.run(main())
