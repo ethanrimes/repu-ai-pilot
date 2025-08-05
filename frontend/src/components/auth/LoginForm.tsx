@@ -52,8 +52,11 @@ export function LoginForm() {
       // Destructure response data (renamed email to userEmail to avoid conflict)
       const { session_id, user_id, email: userEmail } = response.data;
 
-      // Store session ID
+      // Store session ID in both localStorage and cookies
       localStorage.setItem('session_id', session_id);
+      
+      // Set cookie for middleware to detect
+      document.cookie = `session_id=${session_id}; path=/; max-age=${response.data.expires_in}; SameSite=Lax`;
       
       // Set up API client with session
       apiClient.defaults.headers.common['Authorization'] = `Bearer ${session_id}`;

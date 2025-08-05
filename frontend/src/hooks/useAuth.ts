@@ -29,8 +29,9 @@ export function useAuth() {
       // Sign out from Firebase
       await signOut(auth);
       
-      // Clear session
+      // Clear session from localStorage and cookies
       localStorage.removeItem('session_id');
+      document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       delete apiClient.defaults.headers.common['Authorization'];
       
     } catch (error) {
