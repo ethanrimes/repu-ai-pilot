@@ -2,6 +2,8 @@
 
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from typing import Generator, Optional, Dict, Any
 
 from src.infrastructure.integrations.supabase.supabase_config import get_db_pool
@@ -10,14 +12,17 @@ from src.config.settings import get_settings
 
 settings = get_settings()
 
-def get_db() -> Generator:
+# Create SQLAlchemy engine and session factory
+engine = create_engine(settings.database_url)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def get_db() -> Generator[Session, None, None]:
     """Get database session"""
-    pool = get_db_pool()
-    conn = pool.getconn()
+    db = SessionLocal()
     try:
-        yield conn
+        yield db
     finally:
-        pool.putconn(conn)
+        db.close()
 
 async def get_optional_session(
     authorization: Optional[str] = None

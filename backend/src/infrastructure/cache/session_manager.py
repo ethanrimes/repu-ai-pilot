@@ -127,7 +127,7 @@ class SessionManager:
         # Remove from user sessions
         if "user_id" in session_data:
             user_sessions_key = f"user_sessions:{session_data['user_id']}"
-            await self.cache.redis.hdel(user_sessions_key, session_id)
+            self.cache.redis.hdel(user_sessions_key, session_id)
         
         # Mark as ended in PostgreSQL
         if self.session_repo:

@@ -184,6 +184,13 @@ coverage.xml
 *.cover
 *.py,cover
 
+
+# ============================================
+# Firebase
+# ============================================
+firebase-service-account.json
+backend/firebase-service-account.json
+
 # ============================================
 # Docker
 # ============================================
