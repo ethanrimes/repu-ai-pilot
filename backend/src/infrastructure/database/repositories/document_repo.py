@@ -9,19 +9,19 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import and_, or_, func
 from pgvector.sqlalchemy import Vector
 
-from backend.src.infrastructure.database.models.document import (
+from src.infrastructure.database.models.document import (
     Document as DocumentDB,
     Chunk as ChunkDB,
     DocumentArticleLink as DocumentArticleLinkDB,
     DocumentVehicleLink as DocumentVehicleLinkDB
 )
-from backend.src.core.models.document import (
+from src.core.models.document import (
     Document, DocumentCreate, DocumentUpdate, DocumentSearch,
     Chunk, ChunkCreate,
     DocumentArticleLink, DocumentVehicleLink,
     VectorSearchParams, SearchResult
 )
-from backend.src.shared.utils.logger import get_logger
+from src.shared.utils.logger import get_logger
 
 logger = get_logger(__name__)
 

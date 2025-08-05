@@ -4,10 +4,9 @@ from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import Generator, Optional, Dict, Any
 
-from backend.src.infrastructure.database.models import Base
-from backend.src.infrastructure.integrations.supabase.supabase_config import get_db_pool
-from backend.src.infrastructure.cache.session_manager import get_session_manager
-from backend.src.config.settings import get_settings
+from src.infrastructure.integrations.supabase.supabase_config import get_db_pool
+from src.infrastructure.cache.session_manager import get_session_manager
+from src.config.settings import get_settings
 
 settings = get_settings()
 

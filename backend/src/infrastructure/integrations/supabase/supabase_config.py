@@ -3,7 +3,7 @@
 
 from supabase import create_client, Client
 from functools import lru_cache
-from backend.src.config.settings import get_settings
+from src.config.settings import get_settings
 import psycopg2
 from psycopg2.pool import SimpleConnectionPool
 

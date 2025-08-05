@@ -8,16 +8,16 @@ from pathlib import Path
 import asyncio
 from datetime import datetime
 
-from backend.src.core.models.document import (
+from src.core.models.document import (
     Document, DocumentCreate, DocumentUpdate,
     Chunk, ChunkCreate,
     DocumentArticleLink, DocumentVehicleLink,
     DocumentType, DocumentCategory, ChunkStrategy
 )
-from backend.src.infrastructure.database.repositories.document_repo import DocumentRepository
-from backend.src.infrastructure.llm.embeddings import get_embedding_service
-from backend.src.infrastructure.llm.chunking.text_chunker import TextChunker
-from backend.src.shared.utils.logger import get_logger
+from src.infrastructure.database.repositories.document_repo import DocumentRepository
+from src.infrastructure.llm.embeddings import get_embedding_service
+from src.infrastructure.llm.chunking.text_chunker import TextChunker
+from src.shared.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
