@@ -112,3 +112,44 @@ async def get_chat_status(
     status = await chat_service.get_chat_status(session_id)
     
     return status
+
+@router.post("/language-change", response_model=ChatResponse)
+async def handle_language_change(
+    request: Dict[str, str],
+    authorization: Optional[str] = Header(None),
+    chat_service: ChatService = Depends(get_chat_service)
+):
+    """
+    Handle language change and reset conversation
+    
+    - Resets conversation state to beginning
+    - Returns greeting message in new language
+    - Clears previous conversation context
+    """
+    session = await require_session(authorization)
+    session_id = session["session_id"]
+    
+    new_language = request.get("language", "es")
+    
+    if new_language not in ["es", "en"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Language must be 'es' or 'en'"
+        )
+    
+    try:
+        logger.info(f"Handling language change to {new_language} for session {session_id}")
+        
+        response = await chat_service.reset_conversation_for_language_change(
+            session_id=session_id,
+            language=new_language
+        )
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"Error in language change endpoint: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to handle language change"
+        )

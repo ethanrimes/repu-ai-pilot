@@ -38,7 +38,10 @@ export const chatApi = {
     apiClient.get('/chat/history'),
   
   clearHistory: () => 
-    apiClient.delete('/chat/history')
+    apiClient.delete('/chat/history'),
+  
+  changeLanguage: (data: { language: 'es' | 'en' }) =>
+    apiClient.post<ChatResponse>('/chat/language-change', data)
 };
 
 // Document/Search endpoints
