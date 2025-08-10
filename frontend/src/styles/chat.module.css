@@ -74,6 +74,131 @@
   padding: 0 0.5rem;
 }
 
+/* Markdown styles for assistant messages */
+.markdownP {
+  margin: 0 0 0.5rem 0;
+}
+
+.markdownP:last-child {
+  margin-bottom: 0;
+}
+
+.markdownUl,
+.markdownOl {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.markdownLi {
+  margin: 0.25rem 0;
+  line-height: 1.6;
+}
+
+.markdownStrong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.markdownEm {
+  font-style: italic;
+}
+
+.markdownInlineCode {
+  background: rgba(0, 0, 0, 0.08);
+  padding: 0.125rem 0.25rem;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875em;
+  color: #1f2937;
+}
+
+.markdownPre {
+  background: #1f2937;
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+
+.markdownCodeBlock {
+  color: #e5e7eb;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.markdownBlockquote {
+  border-left: 3px solid #3b82f6;
+  padding-left: 1rem;
+  margin: 0.5rem 0;
+  color: #4b5563;
+  font-style: italic;
+}
+
+.markdownH1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 1rem 0 0.5rem 0;
+  color: #111827;
+}
+
+.markdownH2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0.75rem 0 0.5rem 0;
+  color: #1f2937;
+}
+
+.markdownH3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0.5rem 0 0.25rem 0;
+  color: #374151;
+}
+
+.markdownH1:first-child,
+.markdownH2:first-child,
+.markdownH3:first-child {
+  margin-top: 0;
+}
+
+.markdownLink {
+  color: #3b82f6;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.markdownLink:hover {
+  color: #2563eb;
+}
+
+/* Table styles for markdown */
+.markdownTable {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.markdownTable th,
+.markdownTable td {
+  border: 1px solid #d1d5db;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.markdownTable th {
+  background: #f3f4f6;
+  font-weight: 600;
+}
+
+/* Horizontal rule */
+.markdownHr {
+  border: none;
+  border-top: 1px solid #d1d5db;
+  margin: 1rem 0;
+}
+
 /* Input styles */
 .messageInputForm {
   display: flex;
@@ -88,8 +213,8 @@
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.15s;
-  color: #171717; /* Explicit text color */
-  background-color: #ffffff; /* Explicit background */
+  color: #171717;
+  background-color: #ffffff;
 }
 
 .messageInput:focus {
