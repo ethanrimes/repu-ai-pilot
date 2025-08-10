@@ -1,0 +1,53 @@
+{
+  "interface": {
+    "title": "Chat con RepuAI",
+    "subtitle": "Pregúntame sobre repuestos automotrices",
+    "placeholder": "Escribe tu consulta sobre repuestos automotrices...",
+    "placeholderExamples": [
+      "Necesito pastillas de freno para un Toyota Corolla 2020",
+      "¿Cuál es el precio de discos de freno para Honda Civic?",
+      "¿Tienen repuestos para Chevrolet Spark?"
+    ]
+  },
+  "actions": {
+    "send": "Enviar",
+    "clearHistory": "Limpiar historial",
+    "newChat": "Nueva conversación",
+    "exportChat": "Exportar conversación",
+    "shareChat": "Compartir chat"
+  },
+  "status": {
+    "thinking": "Pensando...",
+    "typing": "Escribiendo...",
+    "searching": "Buscando repuestos...",
+    "connecting": "Conectando...",
+    "offline": "Sin conexión"
+  },
+  "messages": {
+    "welcome": "¡Hola! Soy RepuAI, tu asistente para repuestos automotrices. ¿En qué puedo ayudarte hoy?",
+    "errorMessage": "Lo siento, ocurrió un error. Por favor intenta de nuevo.",
+    "networkError": "Error de conexión. Verifica tu internet e intenta nuevamente.",
+    "rateLimitError": "Has excedido el límite de mensajes. Intenta de nuevo en unos minutos.",
+    "sessionExpired": "Tu sesión ha expirado. Por favor inicia sesión nuevamente."
+  },
+  "features": {
+    "voiceInput": "Entrada por voz",
+    "imageUpload": "Subir imagen",
+    "locationShare": "Compartir ubicación",
+    "suggestions": "Sugerencias",
+    "history": "Historial"
+  },
+  "empty": {
+    "title": "¡Comienza una nueva conversación!",
+    "description": "Pregúntame sobre cualquier repuesto automotriz que necesites.",
+    "suggestions": {
+      "title": "Preguntas frecuentes:",
+      "items": [
+        "¿Qué pastillas de freno necesito?",
+        "Precios de discos de freno",
+        "Repuestos para mi vehículo",
+        "¿Tienen garantía los repuestos?"
+      ]
+    }
+  }
+}

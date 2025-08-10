@@ -28,22 +28,30 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         if request.url.path in ["/health", "/docs", "/openapi.json"]:
             return await call_next(request)
         
-        identifier = self._get_identifier(request)
-        endpoint = request.url.path
-        
-        # Minute window check
-        if not await self._check_rate_limit(identifier, endpoint):
-            raise HTTPException(
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                detail="Rate limit exceeded (per-minute)"
-            )
-        
-        # Daily / weekly checks
-        if not await self._check_longer_limits(identifier):
-            raise HTTPException(
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                detail="Rate limit exceeded (daily/weekly)"
-            )
+        try:
+            identifier = self._get_identifier(request)
+            endpoint = request.url.path
+            
+            # Minute window check
+            if not await self._check_rate_limit(identifier, endpoint):
+                raise HTTPException(
+                    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                    detail="Rate limit exceeded (per-minute)"
+                )
+            
+            # Daily / weekly checks
+            if not await self._check_longer_limits(identifier):
+                raise HTTPException(
+                    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                    detail="Rate limit exceeded (daily/weekly)"
+                )
+                
+        except HTTPException:
+            # Re-raise HTTP exceptions (rate limit errors)
+            raise
+        except Exception as e:
+            # Log Redis errors but don't block the request
+            logger.warning(f"Rate limiting failed, allowing request: {e}")
         
         response = await call_next(request)
         return response
@@ -66,48 +74,56 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         2. Count requests in the last 60 seconds
         3. Remove old entries outside the window
         """
-        current_time = int(time.time())
-        window_start = current_time - self.window_seconds
-        
-        # Use sorted set for sliding window
-        key = f"rate_limit:{identifier}:{endpoint}"
-        
-        # Remove old entries
-        self.cache.redis.zremrangebyscore(key, 0, window_start)
-        
-        # Count requests in window
-        request_count = self.cache.redis.zcard(key)
-        
-        if request_count >= self.requests_per_minute:
-            return False
-        
-        # Add current request
-        self.cache.redis.zadd(key, {str(uuid.uuid4()): current_time})
-        self.cache.redis.expire(key, self.window_seconds)
-        
-        return True
+        try:
+            current_time = int(time.time())
+            window_start = current_time - self.window_seconds
+            
+            # Use sorted set for sliding window
+            key = f"rate_limit:{identifier}:{endpoint}"
+            
+            # Remove old entries
+            self.cache.redis.zremrangebyscore(key, 0, window_start)
+            
+            # Count requests in window
+            request_count = self.cache.redis.zcard(key)
+            
+            if request_count >= self.requests_per_minute:
+                return False
+            
+            # Add current request
+            self.cache.redis.zadd(key, {str(uuid.uuid4()): current_time})
+            self.cache.redis.expire(key, self.window_seconds)
+            
+            return True
+        except Exception as e:
+            logger.warning(f"Rate limit check failed for {identifier}: {e}")
+            return True  # Allow request if Redis fails
     
     async def _check_longer_limits(self, identifier: str) -> bool:
         """Increment and test daily and weekly counters."""
-        now = int(time.time())
-        # Daily key (UTC day)
-        day_key = time.strftime("%Y%m%d", time.gmtime(now))
-        week_key = time.strftime("%Y%W", time.gmtime(now))  # Year + week number
-        daily_counter_key = f"rate_daily:{identifier}:{day_key}"
-        weekly_counter_key = f"rate_weekly:{identifier}:{week_key}"
-        
-        pipe = self.cache.redis.pipeline()
-        pipe.incr(daily_counter_key, 1)
-        pipe.expire(daily_counter_key, 60 * 60 * 24 + 60)  # expire a little after a day
-        pipe.incr(weekly_counter_key, 1)
-        pipe.expire(weekly_counter_key, 60 * 60 * 24 * 7 + 300)  # expire a little after a week
-        results = pipe.execute()
-        daily_count = results[0]
-        weekly_count = results[2]
-        
-        if daily_count > self.daily_limit or weekly_count > self.weekly_limit:
-            logger.warning(
-                f"Rate limit exceeded for {identifier}: daily={daily_count}/{self.daily_limit}, weekly={weekly_count}/{self.weekly_limit}"
-            )
-            return False
-        return True
+        try:
+            now = int(time.time())
+            # Daily key (UTC day)
+            day_key = time.strftime("%Y%m%d", time.gmtime(now))
+            week_key = time.strftime("%Y%W", time.gmtime(now))  # Year + week number
+            daily_counter_key = f"rate_daily:{identifier}:{day_key}"
+            weekly_counter_key = f"rate_weekly:{identifier}:{week_key}"
+            
+            pipe = self.cache.redis.pipeline()
+            pipe.incr(daily_counter_key)
+            pipe.expire(daily_counter_key, 60 * 60 * 24 + 60)  # expire a little after a day
+            pipe.incr(weekly_counter_key)
+            pipe.expire(weekly_counter_key, 60 * 60 * 24 * 7 + 300)  # expire a little after a week
+            results = pipe.execute()
+            daily_count = results[0]
+            weekly_count = results[2]
+            
+            if daily_count > self.daily_limit or weekly_count > self.weekly_limit:
+                logger.warning(
+                    f"Rate limit exceeded for {identifier}: daily={daily_count}/{self.daily_limit}, weekly={weekly_count}/{self.weekly_limit}"
+                )
+                return False
+            return True
+        except Exception as e:
+            logger.warning(f"Longer limits check failed for {identifier}: {e}")
+            return True  # Allow request if Redis fails

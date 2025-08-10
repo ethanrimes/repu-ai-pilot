@@ -7,35 +7,36 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 from src.config.settings import get_settings
 from src.core.models.chat import ChatMessage, MessageRole
+from src.core.services.language_service import get_language_service
 from src.shared.utils.logger import get_logger
 
 logger = get_logger(__name__)
 settings = get_settings()
 
 class OpenAIChatProvider:
-    """OpenAI chat completion provider"""
+    """OpenAI chat completion provider with language support"""
     
-    def __init__(self, model: str = None):
+    def __init__(self, model: str = None, language: str = None):
         self.client = AsyncOpenAI(api_key=settings.openai_api_key)
         self.model = model or settings.chat_model or "gpt-4-turbo-preview"
         self.max_tokens = 2000
         self.temperature = 0.7
+        self.language = language or settings.default_language
+        self.language_service = get_language_service()
         self.system_prompt = self._get_system_prompt()
     
     def _get_system_prompt(self) -> str:
-        """Get the system prompt for the assistant"""
-        return """You are an AI assistant for a Colombian automotive parts company. 
-        You help customers find the right auto parts, answer technical questions, 
-        and provide support in both Spanish and English. 
-        
-        Key responsibilities:
-        - Help identify correct parts for specific vehicles
-        - Provide technical specifications and compatibility information
-        - Answer questions about installation and maintenance
-        - Assist with order inquiries and pricing
-        
-        Always be helpful, professional, and accurate. If you're unsure about 
-        specific part compatibility, recommend verifying with the technical team."""
+        """Get the system prompt for the assistant based on language"""
+        return self.language_service.get_system_prompt(self.language, "base_system")
+    
+    def set_language(self, language: str) -> None:
+        """Update the language and reload system prompt"""
+        if self.language_service.is_language_supported(language):
+            self.language = language
+            self.system_prompt = self._get_system_prompt()
+            logger.info(f"Language set to: {language}")
+        else:
+            logger.warning(f"Unsupported language '{language}', keeping current: {self.language}")
     
     @retry(
         stop=stop_after_attempt(3),
@@ -45,14 +46,19 @@ class OpenAIChatProvider:
         self, 
         messages: List[ChatMessage],
         temperature: Optional[float] = None,
-        max_tokens: Optional[int] = None
+        max_tokens: Optional[int] = None,
+        language: Optional[str] = None
     ) -> tuple[str, Dict[str, Any]]:
-        """Generate a chat response using OpenAI"""
+        """Generate a chat response using OpenAI with language support"""
+        
+        # Update language if provided
+        if language and language != self.language:
+            self.set_language(language)
         
         # Convert messages to OpenAI format
         openai_messages = []
         
-        # Always include system prompt
+        # Always include system prompt in the current language
         openai_messages.append({
             "role": "system",
             "content": self.system_prompt
@@ -66,7 +72,7 @@ class OpenAIChatProvider:
             })
         
         try:
-            logger.debug(f"Sending {len(openai_messages)} messages to OpenAI")
+            logger.debug(f"Sending {len(openai_messages)} messages to OpenAI (language: {self.language})")
             
             response = await self.client.chat.completions.create(
                 model=self.model,
@@ -86,10 +92,11 @@ class OpenAIChatProvider:
                 "prompt_tokens": response.usage.prompt_tokens,
                 "completion_tokens": response.usage.completion_tokens,
                 "total_tokens": response.usage.total_tokens,
-                "model": self.model
+                "model": self.model,
+                "language": self.language
             }
             
-            logger.info(f"Generated response with {usage_info['total_tokens']} tokens")
+            logger.info(f"Generated response with {usage_info['total_tokens']} tokens (language: {self.language})")
             
             return message_content, usage_info
             
@@ -100,9 +107,15 @@ class OpenAIChatProvider:
     async def generate_streaming_response(
         self,
         messages: List[ChatMessage],
-        temperature: Optional[float] = None
+        temperature: Optional[float] = None,
+        language: Optional[str] = None
     ):
-        """Generate streaming chat response (for future use)"""
+        """Generate streaming chat response (for future use) with language support"""
+        
+        # Update language if provided
+        if language and language != self.language:
+            self.set_language(language)
+        
         # Convert messages to OpenAI format
         openai_messages = [
             {"role": "system", "content": self.system_prompt}

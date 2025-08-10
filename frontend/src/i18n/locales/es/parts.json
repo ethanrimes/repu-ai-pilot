@@ -1,0 +1,53 @@
+{
+  "search": {
+    "title": "Buscar Repuestos",
+    "placeholder": "Buscar por marca, modelo o tipo de repuesto...",
+    "filters": {
+      "brand": "Marca",
+      "model": "Modelo",
+      "year": "Año",
+      "category": "Categoría",
+      "priceRange": "Rango de precio"
+    },
+    "results": {
+      "found": "{{count}} repuestos encontrados",
+      "noResults": "No se encontraron repuestos",
+      "loading": "Buscando repuestos..."
+    }
+  },
+  "products": {
+    "categories": {
+      "brakes": "Frenos",
+      "brakePads": "Pastillas de freno",
+      "brakeDiscs": "Discos de freno",
+      "brakeCalipers": "Calipers de freno",
+      "brakeFluid": "Líquido de frenos"
+    },
+    "details": {
+      "price": "Precio",
+      "availability": "Disponibilidad",
+      "warranty": "Garantía",
+      "specifications": "Especificaciones",
+      "compatibility": "Compatibilidad",
+      "installation": "Instalación"
+    },
+    "actions": {
+      "addToCart": "Agregar al carrito",
+      "buyNow": "Comprar ahora",
+      "getQuote": "Solicitar cotización",
+      "viewDetails": "Ver detalles"
+    }
+  },
+  "vehicle": {
+    "selector": {
+      "title": "Selecciona tu vehículo",
+      "year": "Año",
+      "make": "Marca",
+      "model": "Modelo",
+      "engine": "Motor",
+      "selectYear": "Selecciona el año",
+      "selectMake": "Selecciona la marca",
+      "selectModel": "Selecciona el modelo"
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "search": {
+    "title": "Search Parts",
+    "placeholder": "Search by brand, model or part type...",
+    "filters": {
+      "brand": "Brand",
+      "model": "Model",
+      "year": "Year",
+      "category": "Category",
+      "priceRange": "Price range"
+    },
+    "results": {
+      "found": "{{count}} parts found",
+      "noResults": "No parts found",
+      "loading": "Searching parts..."
+    }
+  },
+  "products": {
+    "categories": {
+      "brakes": "Brakes",
+      "brakePads": "Brake pads",
+      "brakeDiscs": "Brake discs",
+      "brakeCalipers": "Brake calipers",
+      "brakeFluid": "Brake fluid"
+    },
+    "details": {
+      "price": "Price",
+      "availability": "Availability",
+      "warranty": "Warranty",
+      "specifications": "Specifications",
+      "compatibility": "Compatibility",
+      "installation": "Installation"
+    },
+    "actions": {
+      "addToCart": "Add to cart",
+      "buyNow": "Buy now",
+      "getQuote": "Request quote",
+      "viewDetails": "View details"
+    }
+  },
+  "vehicle": {
+    "selector": {
+      "title": "Select your vehicle",
+      "year": "Year",
+      "make": "Make",
+      "model": "Model",
+      "engine": "Engine",
+      "selectYear": "Select year",
+      "selectMake": "Select make",
+      "selectModel": "Select model"
+    }
+  }
+}
