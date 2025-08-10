@@ -1,0 +1,69 @@
+es:
+  # Product Search Init
+  product_search_welcome: |
+    ¡Perfecto! Te ayudaré a encontrar los repuestos que necesitas para tu vehículo. 🚗
+    
+    Primero necesito identificar tu vehículo específico para asegurarme de que los repuestos sean compatibles.
+
+  # Vehicle Identification
+  vehicle_identification_prompt: |
+    Para identificar tu vehículo, puedes elegir una de estas opciones:
+
+  vin_license_button: "🔍 Proceder con VIN o matrícula"
+  make_model_button: "🚗 Buscar por marca y modelo"
+  not_implemented_note: "(No implementado)"
+  
+  vin_not_implemented: |
+    Lo siento, la búsqueda por VIN o matrícula aún no está implementada. 
+    Por favor, usa la opción de búsqueda por marca y modelo.
+
+  opening_vehicle_selector: |
+    Abriendo el selector de vehículos... Por favor, selecciona tu vehículo usando los filtros disponibles.
+
+  vehicle_selected: |
+    ✅ **Vehículo seleccionado:**
+    - **Marca:** {make}
+    - **Modelo:** {model}
+    - **Motor:** {engine}
+    - **Año:** {year}
+
+  proceed_to_parts: |
+    Ahora que hemos identificado tu vehículo, ¿qué tipo de repuesto necesitas?
+
+  vehicle_selection_error: |
+    Hubo un error al procesar la selección del vehículo. Por favor, inténtalo de nuevo.
+
+en:
+  # Product Search Init
+  product_search_welcome: |
+    Perfect! I'll help you find the parts you need for your vehicle. 🚗
+    
+    First, I need to identify your specific vehicle to ensure the parts are compatible.
+
+  # Vehicle Identification
+  vehicle_identification_prompt: |
+    To identify your vehicle, you can choose one of these options:
+
+  vin_license_button: "🔍 Proceed with VIN or license plate"
+  make_model_button: "🚗 Find by make and model"
+  not_implemented_note: "(Not implemented)"
+  
+  vin_not_implemented: |
+    Sorry, VIN or license plate search is not yet implemented. 
+    Please use the make and model search option.
+
+  opening_vehicle_selector: |
+    Opening vehicle selector... Please select your vehicle using the available filters.
+
+  vehicle_selected: |
+    ✅ **Vehicle selected:**
+    - **Make:** {make}
+    - **Model:** {model}
+    - **Engine:** {engine}
+    - **Year:** {year}
+
+  proceed_to_parts: |
+    Now that we've identified your vehicle, what type of part do you need?
+
+  vehicle_selection_error: |
+    There was an error processing the vehicle selection. Please try again.

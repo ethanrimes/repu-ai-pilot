@@ -1,0 +1,29 @@
+{
+  "vehicleTypes": {
+    "Automobile": "Automobile",
+    "Commercial-Vehicles": "Commercial Vehicles",
+    "Moto": "Motorcycle"
+  },
+  "vehicleSelection": {
+    "title": "Select Vehicle",
+    "vehicleType": "Vehicle Type",
+    "manufacturer": "Manufacturer",
+    "model": "Model",
+    "engine": "Engine",
+    "searchPlaceholder": "Search...",
+    "selectType": "Select type",
+    "selectManufacturer": "Select manufacturer",
+    "selectModel": "Select model",
+    "selectVehicle": "Select vehicle",
+    "loading": "Loading...",
+    "filters": "Filters",
+    "yearRange": "Year Range",
+    "startYear": "Start Year",
+    "endYear": "End Year",
+    "applyFilters": "Apply Filters",
+    "clearFilters": "Clear Filters",
+    "noResults": "No vehicles found",
+    "selectButton": "Select This Vehicle",
+    "close": "Close"
+  }
+}

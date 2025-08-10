@@ -5,6 +5,7 @@ import { chatApi } from '@/lib/api/endpoints';
 import type { ChatMessage, ChatResponse } from '@/lib/api/types';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
+import { VehicleSelectionModal } from './VehicleSelectionModal';
 import { useLanguage, useTranslations } from '@/hooks/useLanguage';
 import { useLanguageStore } from '@/stores/languageStore';
 import styles from '@/styles/chat.module.css';
@@ -14,6 +15,17 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  buttons?: Array<{
+    id: string;
+    text: string;
+    disabled?: boolean;
+    note?: string;
+  }>;
+}
+
+interface VehicleType {
+  id: number;
+  vehicleType: string;
 }
 
 export function ChatInterface() {
@@ -24,6 +36,8 @@ export function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState(language);
   const [initialLoaded, setInitialLoaded] = useState(false);
+  const [showVehicleModal, setShowVehicleModal] = useState(false);
+  const [vehicleTypes, setVehicleTypes] = useState<VehicleType[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -129,11 +143,47 @@ export function ChatInterface() {
 
       const data: ChatResponse = response.data;
 
+      // Check if the response contains special JSON data
+      let messageContent = data.message;
+      let messageButtons = undefined;
+      
+      try {
+        const parsedContent = JSON.parse(data.message);
+        
+        if (parsedContent.type === 'VEHICLE_ID_OPTIONS') {
+          messageContent = parsedContent.message;
+          messageButtons = parsedContent.buttons;
+        } else if (parsedContent.type === 'OPEN_VEHICLE_MODAL') {
+          messageContent = parsedContent.message;
+          setVehicleTypes(parsedContent.vehicleTypes || []);
+          setShowVehicleModal(true);
+        } else if (parsedContent.type === 'MANUFACTURERS_DATA') {
+          // Handle manufacturers data for modal
+          handleModalDataUpdate(parsedContent);
+          return; // Don't add this as a chat message
+        } else if (parsedContent.type === 'MODELS_DATA') {
+          // Handle models data for modal
+          handleModalDataUpdate(parsedContent);
+          return; // Don't add this as a chat message
+        } else if (parsedContent.type === 'VEHICLES_DATA') {
+          // Handle vehicles data for modal
+          handleModalDataUpdate(parsedContent);
+          return; // Don't add this as a chat message
+        } else if (parsedContent.type === 'ERROR') {
+          // Handle error data for modal
+          handleModalDataUpdate(parsedContent);
+          return; // Don't add this as a chat message
+        }
+      } catch (e) {
+        // Not JSON, treat as regular message
+      }
+
       const assistantMessage: Message = {
         id: data.message_id || (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.message, // map backend 'message' field
-        timestamp: new Date(data.timestamp)
+        content: messageContent,
+        timestamp: new Date(data.timestamp),
+        buttons: messageButtons
       };
 
       setMessages(prev => [...prev, assistantMessage]);
@@ -151,10 +201,35 @@ export function ChatInterface() {
     }
   };
 
+  const handleButtonClick = (buttonId: string) => {
+    sendMessage(buttonId);
+  };
+
+  const handleVehicleSelect = (vehicle: any) => {
+    const vehicleMessage = `VEHICLE_SELECTED:${JSON.stringify(vehicle)}`;
+    sendMessage(vehicleMessage);
+    setShowVehicleModal(false);
+  };
+
+  // Handle modal data updates
+  const handleModalDataUpdate = (data: any) => {
+    // This will be handled by the modal component through a ref or callback
+    if (modalDataHandlerRef.current) {
+      modalDataHandlerRef.current(data);
+    }
+  };
+
+  // Ref to store modal data handler
+  const modalDataHandlerRef = useRef<((data: any) => void) | null>(null);
+
+  const setModalDataHandler = (handler: (data: any) => void) => {
+    modalDataHandlerRef.current = handler;
+  };
+
   return (
     <div className={styles.chatContainer}>
       <div className={styles.messagesContainer}>
-        <MessageList messages={messages} />
+        <MessageList messages={messages} onButtonClick={handleButtonClick} />
         {(isLoading || isChangingLanguage) && (
           <div className={styles.thinkingIndicator}>
             {isChangingLanguage ? (
@@ -171,6 +246,15 @@ export function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
       <MessageInput onSend={sendMessage} disabled={isLoading || isChangingLanguage} />
+      
+      <VehicleSelectionModal
+        isOpen={showVehicleModal}
+        onClose={() => setShowVehicleModal(false)}
+        onVehicleSelect={handleVehicleSelect}
+        vehicleTypes={vehicleTypes}
+        onSendMessage={sendMessage}
+        onDataHandlerReady={setModalDataHandler}
+      />
     </div>
   );
 }

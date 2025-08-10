@@ -3,7 +3,7 @@ import yaml
 from pathlib import Path
 
 from src.core.conversation.models import ConversationSession, ConversationState, CustomerIntent
-# from src.core.conversation.utils.parser import IntentParser
+from src.core.conversation.utils.parser import IntentParser
 from src.shared.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -17,7 +17,7 @@ class IntentMenuState:
         with open(template_path, 'r', encoding='utf-8') as f:
             self.templates = yaml.safe_load(f)
         
-        # self.parser = IntentParser()
+        self.parser = IntentParser()
     
     def get_entry_message(self, language: str = "es") -> str:
         """Get the intent menu message"""

@@ -11,6 +11,7 @@ class ConversationState(Enum):
     
     # Product Search Journey
     PRODUCT_SEARCH_INIT = "product_search_init"
+    VEHICLE_IDENTIFICATION = "vehicle_identification"  # New state for vehicle identification
     VEHICLE_INFO_COLLECTION = "vehicle_info_collection"
     PART_TYPE_SELECTION = "part_type_selection"
     PRODUCT_PRESENTATION = "product_presentation"
@@ -47,6 +48,11 @@ class ConversationContext:
     vehicle_make: Optional[str] = None
     vehicle_model: Optional[str] = None
     vehicle_year: Optional[str] = None
+    vehicle_type_id: Optional[int] = None  # TecDoc vehicle type ID
+    manufacturer_id: Optional[int] = None  # TecDoc manufacturer ID
+    model_id: Optional[int] = None  # TecDoc model ID
+    vehicle_id: Optional[int] = None  # TecDoc specific vehicle ID
+    vehicle_details: Optional[Dict[str, Any]] = None  # Full vehicle details from TecDoc
     
     # Part info
     part_type: Optional[str] = None
@@ -61,10 +67,20 @@ class ConversationContext:
     channel: str = "web"
     
     def to_dict(self) -> Dict[str, Any]:
-        return {k: v for k, v in self.__dict__.items()}
+        result = {}
+        for k, v in self.__dict__.items():
+            if isinstance(v, CustomerIntent):
+                # Serialize enum as its value
+                result[k] = v.value
+            else:
+                result[k] = v
+        return result
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "ConversationContext":
+        # Handle enum deserialization
+        if "selected_intent" in data and data["selected_intent"] is not None:
+            data["selected_intent"] = CustomerIntent(data["selected_intent"])
         return cls(**data)
 
 @dataclass
