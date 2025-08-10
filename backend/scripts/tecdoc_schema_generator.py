@@ -14,7 +14,7 @@ import sys
 
 # Configuration
 BASE_URL = "https://tecdoc-catalog.p.rapidapi.com"
-API_KEY = "REDACTED_CREDENTIAL"
+API_KEY = ""
 API_HOST = "tecdoc-catalog.p.rapidapi.com"
 
 # Test data (same as in bash script)

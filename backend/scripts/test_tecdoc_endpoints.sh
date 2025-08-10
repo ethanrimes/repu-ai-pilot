@@ -2,7 +2,7 @@
 
 # Configuration
 BASE_URL="https://tecdoc-catalog.p.rapidapi.com"
-API_KEY="REDACTED_CREDENTIAL"
+API_KEY=""
 API_HOST="tecdoc-catalog.p.rapidapi.com"
 
 # Define your test data combinations here
