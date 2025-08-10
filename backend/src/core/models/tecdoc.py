@@ -268,7 +268,8 @@ class CategoryV2Node(BaseModel):
     categoryId: int
     categoryName: str
     level: int
-    children: Dict[str, 'CategoryV2Node'] = Field(default_factory=dict)
+    # Children can be either a dict of more nodes OR an empty list for leaf nodes
+    children: Union[Dict[str, 'CategoryV2Node'], List] = Field(default_factory=dict)
 
 
 class CategoryV2(BaseModel):
@@ -278,7 +279,8 @@ class CategoryV2(BaseModel):
 # Category V3 response - dynamic nested structure with different format
 class CategoryV3Children(BaseModel):
     text: str
-    children: Union[Dict[str, 'CategoryV3Children'], List[Any]] = Field(default_factory=list)
+    # Children can be either a dict of more nodes OR an empty list for leaf nodes
+    children: Union[Dict[str, 'CategoryV3Children'], List] = Field(default_factory=list)
 
 
 class CategoryV3(BaseModel):
