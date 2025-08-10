@@ -1,33 +1,10 @@
-# backend/api/config/tecdoc_config.py
-# Path: backend/api/config/tecdoc_config.py
-
+# backend/src/infrastructure/integrations/tecdoc/tecdoc_config.py
+from __future__ import annotations
 import httpx
 from functools import lru_cache
 from src.config.settings import get_settings
 
-from __future__ import annotations
-from pydantic import BaseSettings, Field, HttpUrl
-
-class TecDocSettings(BaseSettings):
-    """Configuration for the TecDoc integration.
-
-    Values are read from env if present, with the shown defaults used for local/dev.
-    """
-
-    base_url: HttpUrl = Field(
-        default="https://tecdoc-catalog.p.rapidapi.com", description="TecDoc base URL"
-    )
-    rapidapi_key: str = Field(..., description="RapidAPI key for TecDoc")
-    rapidapi_host: str = Field(
-        default="tecdoc-catalog.p.rapidapi.com", description="RapidAPI host header"
-    )
-    timeout_seconds: float = Field(15.0, description="HTTP timeout for TecDoc calls")
-    max_retries: int = Field(3, ge=0, le=8, description="Max retry attempts on 5xx/timeout")
-
-    class Config:
-        env_prefix = "TECDOC_"
-        case_sensitive = False
-
+# Get settings instance
 settings = get_settings()
 
 @lru_cache()

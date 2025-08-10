@@ -158,8 +158,7 @@ class OrderItemBase(BaseModel):
     discount_cop: Decimal = Field(default=0, decimal_places=2, ge=0)
     
     @property
-    def total_price_cop(self) -> Decimal:
-        """Calculate total price"""
+    def computed_total_price_cop(self) -> Decimal:
         return (self.unit_price_cop * self.quantity) - self.discount_cop
 
 class OrderItemCreate(OrderItemBase):

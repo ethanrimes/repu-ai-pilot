@@ -140,42 +140,42 @@ def generate_pydantic_model(json_file: Path, model_name: str, output_dir: Path):
         return False
 
 
-def create_combined_models_file(models_dir: Path):
-    """Combine all individual model files into a single file"""
-    combined_file = models_dir.parent / "tecdoc_models.py"
+# def create_combined_models_file(models_dir: Path):
+#     """Combine all individual model files into a single file"""
+#     combined_file = models_dir.parent / "tecdoc_models.py"
     
-    with open(combined_file, 'w', encoding='utf-8') as outfile:
-        outfile.write('"""TecDoc API Pydantic Models - Auto-generated"""\n\n')
-        outfile.write('from typing import Any, Dict, List, Optional, Union\n')
-        outfile.write('from pydantic import BaseModel, Field\n')
-        outfile.write('from enum import Enum\n\n')
+#     with open(combined_file, 'w', encoding='utf-8') as outfile:
+#         outfile.write('"""TecDoc API Pydantic Models - Auto-generated"""\n\n')
+#         outfile.write('from typing import Any, Dict, List, Optional, Union\n')
+#         outfile.write('from pydantic import BaseModel, Field\n')
+#         outfile.write('from enum import Enum\n\n')
         
-        # Collect all model files
-        model_files = sorted(models_dir.glob("*_model.py"))
+#         # Collect all model files
+#         model_files = sorted(models_dir.glob("*_model.py"))
         
-        # Extract and combine unique imports and models
-        all_content = []
-        for model_file in model_files:
-            with open(model_file, 'r', encoding='utf-8') as f:
-                content = f.read()
-                # Skip the import statements (we already have them)
-                lines = content.split('\n')
-                model_content = []
-                skip_imports = True
-                for line in lines:
-                    if skip_imports and (line.strip() == '' or line.startswith('from ') or line.startswith('import ')):
-                        continue
-                    else:
-                        skip_imports = False
-                        model_content.append(line)
+#         # Extract and combine unique imports and models
+#         all_content = []
+#         for model_file in model_files:
+#             with open(model_file, 'r', encoding='utf-8') as f:
+#                 content = f.read()
+#                 # Skip the import statements (we already have them)
+#                 lines = content.split('\n')
+#                 model_content = []
+#                 skip_imports = True
+#                 for line in lines:
+#                     if skip_imports and (line.strip() == '' or line.startswith('from ') or line.startswith('import ')):
+#                         continue
+#                     else:
+#                         skip_imports = False
+#                         model_content.append(line)
                 
-                all_content.append('\n'.join(model_content))
+#                 all_content.append('\n'.join(model_content))
         
-        # Write all models
-        outfile.write('\n\n'.join(all_content))
+#         # Write all models
+#         outfile.write('\n\n'.join(all_content))
     
-    print(f"\n✓ Created combined models file: {combined_file}")
-    return combined_file
+#     print(f"\n✓ Created combined models file: {combined_file}")
+#     return combined_file
 
 
 def main():
@@ -219,8 +219,8 @@ def main():
             failed_endpoints.append((endpoint, model_name, "API request failed"))
     
     # Create combined models file
-    if successful_models:
-        create_combined_models_file(models_dir)
+    # if successful_models:
+    #     create_combined_models_file(models_dir)
     
     # Summary
     print("\n=== Summary ===")
