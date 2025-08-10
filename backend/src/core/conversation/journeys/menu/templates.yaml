@@ -11,23 +11,12 @@ es:
     
     Por favor selecciona la opción que mejor describe lo que necesitas:
     
-    1. 🛒 **Búsqueda de Productos** - Buscar repuestos automotrices
-       ✅ implementado
-    
-    2. 🧑‍🔧 **Información Técnica**
-       ❌ no implementado
-    
-    3. 🚚 **Estado de Pedido / Entrega**
-       ❌ no implementado
-    
-    4. 🔁 **Devoluciones / Garantía**
-       ❌ no implementado
-    
-    5. 🤖 **Información General/Tienda**
-       ❌ no implementado
-    
-    6. 📝 **Otro**
-       ❌ no implementado
+    1. 🛒 **Búsqueda de Productos** - Buscar repuestos automotrices ✅ implementado
+    2. 🧑‍🔧 **Información Técnica** ❌ no implementado
+    3. 🚚 **Estado de Pedido / Entrega** ❌ no implementado
+    4. 🔁 **Devoluciones / Garantía** ❌ no implementado
+    5. 🤖 **Información General/Tienda** ❌ no implementado
+    6. 📝 **Otro** ❌ no implementado
     
     Por favor responde con el número de tu elección (1-6).
 
