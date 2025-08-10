@@ -98,7 +98,7 @@ class ChatService:
     ) -> ChatResponse:
         """Process a chat message and generate response"""
         
-        logger.info(f"Processing chat message for session {session_id}")
+        logger.info(f"Processing chat message for session {session_id} (language: {request.language})")
         
         # Add user message to history
         user_message = await self.add_message(
@@ -115,9 +115,10 @@ class ChatService:
         context_messages = history.messages[-10:]  # Last 10 messages for context
         
         try:
-            # Generate response
+            # Generate response with language parameter
             response_content, usage_info = await self.llm_provider.generate_response(
-                messages=context_messages
+                messages=context_messages,
+                language=request.language
             )
             
             # Add assistant response to history
@@ -125,7 +126,11 @@ class ChatService:
                 session_id=session_id,
                 role=MessageRole.ASSISTANT,
                 content=response_content,
-                metadata={"usage": usage_info}
+                metadata={
+                    "usage": usage_info,
+                    "language": request.language,
+                    "model": usage_info.get("model", "unknown")
+                }
             )
             
             # Create response

@@ -1,0 +1,53 @@
+{
+  "interface": {
+    "title": "Chat with RepuAI",
+    "subtitle": "Ask me about automotive parts",
+    "placeholder": "Type your automotive parts inquiry...",
+    "placeholderExamples": [
+      "I need brake pads for a 2020 Toyota Corolla",
+      "What's the price of brake discs for Honda Civic?",
+      "Do you have parts for Chevrolet Spark?"
+    ]
+  },
+  "actions": {
+    "send": "Send",
+    "clearHistory": "Clear history",
+    "newChat": "New conversation",
+    "exportChat": "Export conversation",
+    "shareChat": "Share chat"
+  },
+  "status": {
+    "thinking": "Thinking...",
+    "typing": "Typing...",
+    "searching": "Searching parts...",
+    "connecting": "Connecting...",
+    "offline": "Offline"
+  },
+  "messages": {
+    "welcome": "Hello! I'm RepuAI, your automotive parts assistant. How can I help you today?",
+    "errorMessage": "Sorry, an error occurred. Please try again.",
+    "networkError": "Connection error. Check your internet and try again.",
+    "rateLimitError": "You've exceeded the message limit. Try again in a few minutes.",
+    "sessionExpired": "Your session has expired. Please log in again."
+  },
+  "features": {
+    "voiceInput": "Voice input",
+    "imageUpload": "Upload image",
+    "locationShare": "Share location",
+    "suggestions": "Suggestions",
+    "history": "History"
+  },
+  "empty": {
+    "title": "Start a new conversation!",
+    "description": "Ask me about any automotive part you need.",
+    "suggestions": {
+      "title": "Frequently asked:",
+      "items": [
+        "What brake pads do I need?",
+        "Brake disc prices",
+        "Parts for my vehicle",
+        "Do parts come with warranty?"
+      ]
+    }
+  }
+}

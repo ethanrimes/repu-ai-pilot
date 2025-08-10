@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslations } from '@/hooks/useLanguage';
 import styles from '@/styles/chat.module.css';
 
 interface MessageInputProps {
@@ -8,6 +9,7 @@ interface MessageInputProps {
 
 export function MessageInput({ onSend, disabled }: MessageInputProps) {
   const [message, setMessage] = useState('');
+  const { t } = useTranslations();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +25,7 @@ export function MessageInput({ onSend, disabled }: MessageInputProps) {
         type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        placeholder="Escribe tu mensaje..."
+        placeholder={t('chat.interface.placeholder')}
         disabled={disabled}
         className={styles.messageInput}
       />
@@ -32,7 +34,7 @@ export function MessageInput({ onSend, disabled }: MessageInputProps) {
         disabled={disabled || !message.trim()}
         className={styles.sendButton}
       >
-        Enviar
+        {t('chat.actions.send')}
       </button>
     </form>
   );

@@ -19,6 +19,12 @@
   color: #1a1a1a;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .userSection {
   display: flex;
   align-items: center;

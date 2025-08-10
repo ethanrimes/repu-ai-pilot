@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "RepuAI - Repuestos Automotrices",
+    "tagline": "Tu asistente inteligente para repuestos automotrices"
+  },
+  "language": {
+    "label": "Idioma",
+    "spanish": "Español",
+    "english": "Inglés",
+    "switch": "Cambiar idioma"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "chat": "Chat",
+    "search": "Buscar",
+    "profile": "Perfil",
+    "settings": "Configuración"
+  },
+  "actions": {
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "close": "Cerrar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "confirm": "Confirmar",
+    "retry": "Reintentar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior"
+  },
+  "status": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "warning": "Advertencia",
+    "info": "Información",
+    "noData": "No hay datos disponibles",
+    "noResults": "No se encontraron resultados"
+  },
+  "validation": {
+    "required": "Este campo es obligatorio",
+    "email": "Ingresa un email válido",
+    "minLength": "Mínimo {{count}} caracteres",
+    "maxLength": "Máximo {{count}} caracteres"
+  }
+}

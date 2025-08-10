@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "RepuAI - Automotive Parts",
+    "tagline": "Your intelligent assistant for automotive parts"
+  },
+  "language": {
+    "label": "Language",
+    "spanish": "Spanish",
+    "english": "English",
+    "switch": "Switch language"
+  },
+  "navigation": {
+    "home": "Home",
+    "chat": "Chat",
+    "search": "Search",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "actions": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "retry": "Retry",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous"
+  },
+  "status": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information",
+    "noData": "No data available",
+    "noResults": "No results found"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Enter a valid email",
+    "minLength": "Minimum {{count}} characters",
+    "maxLength": "Maximum {{count}} characters"
+  }
+}

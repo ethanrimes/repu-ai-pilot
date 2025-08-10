@@ -5,6 +5,7 @@ import { chatApi } from '@/lib/api/endpoints';
 import type { ChatMessage, ChatResponse } from '@/lib/api/types';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
+import { useLanguage, useTranslations } from '@/hooks/useLanguage';
 import styles from '@/styles/chat.module.css';
 
 interface Message {
@@ -15,6 +16,8 @@ interface Message {
 }
 
 export function ChatInterface() {
+  const { language } = useLanguage();
+  const { t } = useTranslations();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -40,7 +43,7 @@ export function ChatInterface() {
     try {
       const response = await chatApi.sendMessage({
         message: content,
-        language: 'es'
+        language: language // Pass the current language to the API
       });
 
       const data: ChatResponse = response.data;
@@ -58,7 +61,7 @@ export function ChatInterface() {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'Lo siento, ocurrió un error. Por favor intenta de nuevo.',
+        content: t('chat.messages.errorMessage'),
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
