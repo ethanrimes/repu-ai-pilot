@@ -19,7 +19,7 @@ class ArticleSpecification(BaseModel):
 
 
 class EanNumbers(BaseModel):
-    eanNumbers: str
+    eanNumbers: Optional[str] = None  # Can be None in some responses
 
 
 class OemNumber(BaseModel):
@@ -61,7 +61,7 @@ class ArticleBase(BaseModel):
 
 class ArticleExtended(ArticleBase):
     articleInfo: ArticleInfo
-    allSpecifications: List[ArticleSpecification]
+    allSpecifications: Optional[List[ArticleSpecification]] = None  # Can be None in some responses
     eanNo: Optional[EanNumbers] = None
     oemNo: Optional[List[OemNumber]] = None
     compatibleCars: Optional[List[CompatibleCar]] = None
@@ -205,7 +205,7 @@ class VehicleEngineType(BaseModel):
     numberOfCylinders: int
     capacityLt: str
     capacityTech: str
-    engineCodes: str
+    engineCodes: Optional[str] = None  # Can be None in some responses
 
 
 class VehicleEngineTypes(BaseModel):
@@ -239,7 +239,7 @@ class VehicleTypeDetailsInfo(BaseModel):
     fuelType: str
     catalysatorType: str
     fuelMixture: str
-    engCodes: str
+    engCodes: Optional[str] = None  # Can be None in some responses
 
 
 class VehicleTypeDetails(BaseModel):
@@ -360,11 +360,11 @@ class ArticleListItem(BaseModel):
     supplierId: int
     articleProductName: str
     productId: int
-    articleMediaType: int
-    articleMediaFileName: str
-    imageLink: str
-    imageMedia: str
-    s3ImageLink: str
+    articleMediaType: Optional[int] = None  # Can be None in some cases
+    articleMediaFileName: Optional[str] = None  # Can be None in some cases
+    imageLink: Optional[str] = None  # Can be None in some cases
+    imageMedia: Optional[str] = None  # Can be None in some cases
+    s3ImageLink: Optional[str] = None  # Can be None in some cases
 
 
 class ArticlesList(BaseModel):
