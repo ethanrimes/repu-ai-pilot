@@ -9,6 +9,7 @@ export interface ApiResponse<T> {
 export interface LoginRequest {
   firebase_token: string;
   channel: 'web' | 'whatsapp';
+  invite_code?: string; 
 }
 
 export interface LoginResponse {

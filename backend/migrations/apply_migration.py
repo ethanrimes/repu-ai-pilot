@@ -1,52 +1,60 @@
 #!/usr/bin/env python3
 """
-Quick script to apply the customer name nullable migration
+Quick script to apply all migrations in the migrations/ folder
+in order, sorted by the first three digits of the filename.
 """
+
 import sys
 import os
 from pathlib import Path
+from sqlalchemy import create_engine, text
 
-# Add the backend src to the path
-backend_path = Path(__file__).parent.parent.parent / 'backend'
+# Locate backend path and migrations folder
+backend_path = Path(__file__).parent.parent.parent / "backend"
+migrations_path = backend_path / "migrations"
+
 print(f"Adding backend path to sys.path: {backend_path}")
 sys.path.insert(0, str(backend_path))
 
 from src.config.settings import get_settings
-from sqlalchemy import create_engine, text
 
-def apply_migration():
-    """Apply the customer name nullable migration"""
+
+def apply_migrations():
+    """Apply all migrations from migrations/ in numeric order."""
     settings = get_settings()
     engine = create_engine(settings.database_url)
-    
-    migration_sql = """
-    -- Migration: Make customer name field nullable
-    -- Date: 2025-08-05
-    -- Description: Allow customer name to be null to support Firebase users without names
 
-    BEGIN;
-    
-    -- Remove NOT NULL constraint from name column if it exists
-    ALTER TABLE customers ALTER COLUMN name DROP NOT NULL;
-    
-    -- Add a comment to document the change
-    COMMENT ON COLUMN customers.name IS 'Customer name - nullable to support Firebase users without display names';
-    
-    COMMIT;
-    """
-    
-    try:
-        with engine.connect() as connection:
-            # Execute the migration
-            connection.execute(text(migration_sql))
-            connection.commit()
-            print("✅ Migration applied successfully: customer.name is now nullable")
-    except Exception as e:
-        if "does not exist" in str(e) or "already" in str(e):
-            print("✅ Migration not needed: customer.name is already nullable")
-        else:
-            print(f"❌ Migration failed: {e}")
+    if not migrations_path.exists():
+        print(f"❌ Migrations folder not found: {migrations_path}")
+        sys.exit(1)
+
+    # Get all .sql files, sorted by first 3 digits in filename
+    migration_files = sorted(
+        [f for f in migrations_path.iterdir() if f.suffix == ".sql"],
+        key=lambda f: int(f.name.split("_")[0])
+    )
+
+    if not migration_files:
+        print("No migration files found.")
+        return
+
+    print(f"Found {len(migration_files)} migration(s). Applying in order...")
+
+    for migration_file in migration_files:
+        print(f"▶ Applying migration: {migration_file.name}")
+        sql = migration_file.read_text()
+
+        try:
+            with engine.begin() as connection:
+                connection.execute(text(sql))
+            print(f"✅ Migration applied successfully: {migration_file.name}")
+        except Exception as e:
+            # You might want to log and skip certain known harmless errors
+            print(f"❌ Migration failed for {migration_file.name}: {e}")
             raise
 
+    print("🎉 All migrations applied successfully.")
+
+
 if __name__ == "__main__":
-    apply_migration()
+    apply_migrations()
