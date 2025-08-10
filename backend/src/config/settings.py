@@ -57,8 +57,8 @@ class Settings(BaseSettings):
     
     # TecDoc API (RapidAPI)
     rapidapi_key: str
-    rapidapi_host: str = "car-api2.p.rapidapi.com"
-    tecdoc_api_url: str = "https://car-api2.p.rapidapi.com"
+    rapidapi_host: str = "tecdoc-catalog.p.rapidapi.com"
+    tecdoc_api_url: str = "https://tecdoc-catalog.p.rapidapi.com"
     
     # Infosys RAI
     infosys_rai_enabled: bool = True
@@ -72,6 +72,8 @@ class Settings(BaseSettings):
     rate_limit_free_per_min: int = 30
     rate_limit_premium_per_min: int = 100
     rate_limit_whatsapp_per_min: int = 60
+    rate_limit_daily: int = 200  # NEW daily request cap per identifier
+    rate_limit_weekly: int = 1000  # NEW weekly request cap per identifier
     
     # Language Settings
     default_language: str = "es"
