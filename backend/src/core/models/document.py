@@ -7,13 +7,8 @@ from datetime import datetime
 from enum import Enum
 from uuid import UUID, uuid4
 
-# Better UUID serialization for frontend compatibility
-BetterUUID = Annotated[
-    UUID,
-    BeforeValidator(lambda x: UUID(x) if isinstance(x, str) else x),
-    PlainSerializer(lambda x: str(x)),
-    Field(description="UUID serialized as string"),
-]
+# Import common types from the new location
+from src.core.models.common import BetterUUID, BetterDateTime
 
 class DocumentType(str, Enum):
     """Document type enumeration"""

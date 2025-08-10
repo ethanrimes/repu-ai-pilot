@@ -229,3 +229,41 @@ site/
 # yarn.lock
 # poetry.lock
 # Pipfile.lock
+
+
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# macOS temporary files
+*.swp
+*~.nib
+
+# macOS icon files
+Icon
+Icon?
+Icon\r
+
+# macOS folder attributes
+.AppleDouble
+.LSOverride
+
+# macOS trash folder which might appear on external volumes
+.Trash-*
+
+# macOS directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# macOS specific Xcode files (if doing iOS/macOS development)
+*.xcworkspace
+*.xcuserdata
+*.xcuserdatad/

@@ -6,6 +6,8 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime, date
 from decimal import Decimal
 from enum import Enum
+# Import common types if you want to use UUIDs
+from src.core.models.common import BetterUUID, BetterDateTime
 
 # Enums
 class CustomerType(str, Enum):
