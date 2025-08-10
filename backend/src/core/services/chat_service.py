@@ -1,3 +1,4 @@
+
 # backend/src/core/services/chat_service.py
 
 import json
@@ -8,7 +9,7 @@ from src.core.models.chat import (
     ChatMessage, ChatRequest, ChatResponse, 
     ChatHistory, MessageRole, ChatStatusResponse
 )
-from src.core.conversation.journey_router import CustomerJourneyRouter
+from src.core.conversation.manager import ConversationManager  # CHANGED: New import
 from src.infrastructure.cache.cache_manager import CacheManager
 from src.infrastructure.llm.providers.openai_provider import OpenAIChatProvider
 from src.shared.utils.logger import get_logger
@@ -16,12 +17,12 @@ from src.shared.utils.logger import get_logger
 logger = get_logger(__name__)
 
 class ChatService:
-    """Service for managing chat conversations with customer journey routing"""
+    """Service for managing chat conversations with conversation state management"""
     
     def __init__(self, cache_manager: CacheManager):
         self.cache = cache_manager
         self.llm_provider = OpenAIChatProvider()
-        self.journey_router = CustomerJourneyRouter(cache_manager)
+        self.conversation_manager = ConversationManager(cache_manager)  # CHANGED: New name
         self.max_history_length = 20  # Maximum messages to keep in history
         self.chat_ttl = 86400  # 24 hours, same as session
     
@@ -98,29 +99,30 @@ class ChatService:
         session_id: str, 
         request: ChatRequest
     ) -> ChatResponse:
-        """Process a chat message using customer journey routing"""
+        """Process a chat message using conversation state management"""
         
         logger.info(f"Processing chat message for session {session_id} (language: {request.language})")
         
         try:
-            # Use journey router to process the message and get structured response
-            response_content, journey_metadata = await self.journey_router.process_message(
+            # Use conversation manager to process the message
+            response_content, metadata = await self.conversation_manager.process_message(
                 session_id=session_id,
                 user_message=request.message,
                 language=request.language or "es"
             )
             
-            # Add user message to chat history
-            user_message = await self.add_message(
-                session_id=session_id,
-                role=MessageRole.USER,
-                content=request.message,
-                metadata={
-                    **(request.context or {}),
-                    "conversation_state": journey_metadata.get("conversation_state"),
-                    "language": request.language
-                }
-            )
+            # Add user message to chat history (only if not empty)
+            if request.message:
+                user_message = await self.add_message(
+                    session_id=session_id,
+                    role=MessageRole.USER,
+                    content=request.message,
+                    metadata={
+                        **(request.context or {}),
+                        "state": metadata.get("state"),
+                        "language": request.language
+                    }
+                )
             
             # Add assistant response to chat history
             assistant_message = await self.add_message(
@@ -128,19 +130,19 @@ class ChatService:
                 role=MessageRole.ASSISTANT,
                 content=response_content,
                 metadata={
-                    "conversation_state": journey_metadata.get("conversation_state"),
+                    "state": metadata.get("state"),
+                    "journey": metadata.get("journey"),
                     "language": request.language,
-                    "journey_routing": True,
-                    **journey_metadata
+                    **metadata
                 }
             )
             
-            # Create response
+            # Create response with metadata as usage
             return ChatResponse(
                 message=response_content,
                 message_id=str(assistant_message.id) if hasattr(assistant_message, 'id') else "temp-id",
                 timestamp=assistant_message.timestamp,
-                usage=journey_metadata
+                usage=metadata  # Pass metadata as usage for frontend compatibility
             )
             
         except Exception as e:
@@ -162,7 +164,7 @@ class ChatService:
                 message=error_message,
                 message_id="error-id",
                 timestamp=datetime.utcnow(),
-                usage=None
+                usage={"error": str(e)}
             )
     
     async def clear_chat_history(self, session_id: str) -> bool:
@@ -199,9 +201,11 @@ class ChatService:
     async def reset_conversation_for_language_change(self, session_id: str, language: str) -> ChatResponse:
         """Reset conversation when language changes and return greeting"""
         try:
-            # Use journey router to reset conversation
-            response_content, journey_metadata = await self.journey_router.reset_conversation_for_language_change(
+            # Reset conversation and get new greeting
+            # We can use process_message with empty message to get greeting
+            response_content, metadata = await self.conversation_manager.process_message(
                 session_id=session_id,
+                user_message="",  # Empty message triggers greeting
                 language=language
             )
             
@@ -214,10 +218,10 @@ class ChatService:
                 role=MessageRole.ASSISTANT,
                 content=response_content,
                 metadata={
-                    "conversation_state": "intent_selection",
+                    "state": "intent_menu",  # CHANGED: Updated state name
                     "language": language,
                     "language_changed": True,
-                    **journey_metadata
+                    **metadata
                 }
             )
             
@@ -225,7 +229,7 @@ class ChatService:
                 message=response_content,
                 message_id=str(assistant_message.id) if hasattr(assistant_message, 'id') else "language-change-id",
                 timestamp=assistant_message.timestamp,
-                usage=journey_metadata
+                usage=metadata
             )
             
         except Exception as e:

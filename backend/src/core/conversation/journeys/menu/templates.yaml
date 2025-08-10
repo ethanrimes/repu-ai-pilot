@@ -1,0 +1,140 @@
+
+# ============================================
+# journeys/menu/templates.yaml
+# ============================================
+
+es:
+  menu: |
+    ¡Hola! Soy RepuAI, tu asistente especializado en repuestos automotrices para el mercado colombiano. 🚗
+    
+    Me especializo en componentes de frenos y estoy aquí para ayudarte a encontrar las piezas exactas que necesitas para tu vehículo.
+    
+    Por favor selecciona la opción que mejor describe lo que necesitas:
+    
+    1. 🛒 **Búsqueda de Productos** - Buscar repuestos automotrices
+       ✅ implementado
+    
+    2. 🧑‍🔧 **Información Técnica**
+       ❌ no implementado
+    
+    3. 🚚 **Estado de Pedido / Entrega**
+       ❌ no implementado
+    
+    4. 🔁 **Devoluciones / Garantía**
+       ❌ no implementado
+    
+    5. 🤖 **Información General/Tienda**
+       ❌ no implementado
+    
+    6. 📝 **Otro**
+       ❌ no implementado
+    
+    Por favor responde con el número de tu elección (1-6).
+
+  invalid_selection: |
+    No entendí tu selección "{user_input}".
+    
+    Por favor elige un número del 1 al 6:
+    
+    1. 🛒 Búsqueda de Productos ✅
+    2. 🧑‍🔧 Información Técnica ❌
+    3. 🚚 Estado de Pedido ❌
+    4. 🔁 Devoluciones ❌
+    5. 🤖 Información General ❌
+    6. 📝 Otro ❌
+
+  not_implemented: |
+    Lo siento, la funcionalidad "{intent_name}" aún no está implementada.
+    
+    Actualmente, solo está disponible la **Búsqueda de Productos**. 
+    ¿Te gustaría buscar repuestos automotrices en su lugar?
+    
+    Por favor selecciona la opción 1 para iniciar una búsqueda de productos.
+
+  product_search_selected: |
+    ¡Perfecto! Vamos a buscar los repuestos que necesitas. 🔍
+    
+    Para ayudarte mejor, necesito información sobre tu vehículo. Por favor proporcióname:
+    
+    🚗 **Marca del vehículo** (ej: Toyota, Chevrolet, Renault)
+    📅 **Año** (ej: 2020, 2018)
+    🏷️ **Modelo** (ej: Corolla, Spark, Logan)
+    
+    Puedes escribir algo como: "Toyota Corolla 2020" o dar los detalles paso a paso.
+    
+    ¿Cuál es la información de tu vehículo?
+
+  intent_names:
+    TECHNICAL_INFO: "Información Técnica"
+    ORDER_STATUS: "Estado de Pedido / Entrega"
+    RETURNS_WARRANTY: "Devoluciones / Garantía"
+    GENERAL_INFO: "Información General/Tienda"
+    OTHER: "Otro"
+
+en:
+  menu: |
+    Hello! I'm RepuAI, your specialized assistant for automotive parts in the Colombian market. 🚗
+    
+    I specialize in brake components and I'm here to help you find the exact parts you need for your vehicle.
+    
+    Please select the option that best describes what you need:
+    
+    1. 🛒 **Product Search** - Search for automotive parts
+       ✅ implemented
+    
+    2. 🧑‍🔧 **Technical Information**
+       ❌ not implemented
+    
+    3. 🚚 **Order Status / Delivery**
+       ❌ not implemented
+    
+    4. 🔁 **Returns / Warranty**
+       ❌ not implemented
+    
+    5. 🤖 **General/Store Information**
+       ❌ not implemented
+    
+    6. 📝 **Other**
+       ❌ not implemented
+    
+    Please respond with the number of your choice (1-6).
+
+  invalid_selection: |
+    I didn't understand your selection "{user_input}".
+    
+    Please choose a number from 1 to 6:
+    
+    1. 🛒 Product Search ✅
+    2. 🧑‍🔧 Technical Information ❌
+    3. 🚚 Order Status ❌
+    4. 🔁 Returns ❌
+    5. 🤖 General Information ❌
+    6. 📝 Other ❌
+
+  not_implemented: |
+    Sorry, the "{intent_name}" functionality is not yet implemented.
+    
+    Currently, only **Product Search** is available. 
+    Would you like to search for automotive parts instead?
+    
+    Please select option 1 to start a product search.
+
+  product_search_selected: |
+    Perfect! Let's search for the parts you need. 🔍
+    
+    To help you better, I need information about your vehicle. Please provide me with:
+    
+    🚗 **Vehicle brand** (e.g: Toyota, Chevrolet, Renault)
+    📅 **Year** (e.g: 2020, 2018)
+    🏷️ **Model** (e.g: Corolla, Spark, Logan)
+    
+    You can write something like: "Toyota Corolla 2020" or give the details step by step.
+    
+    What's your vehicle information?
+
+  intent_names:
+    TECHNICAL_INFO: "Technical Information"
+    ORDER_STATUS: "Order Status / Delivery"
+    RETURNS_WARRANTY: "Returns / Warranty"
+    GENERAL_INFO: "General/Store Information"
+    OTHER: "Other"
