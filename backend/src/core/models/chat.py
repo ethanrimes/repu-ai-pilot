@@ -25,7 +25,7 @@ class ChatMessage(BaseModel):
 
 class ChatRequest(BaseModel):
     """Request to send a chat message"""
-    message: str = Field(..., min_length=1, max_length=4000)
+    message: str = Field(..., min_length=0, max_length=4000)  # Allow empty messages for initial conversation trigger
     context: Optional[Dict[str, Any]] = None
     language: Optional[Literal['es','en']] = Field(default='es', description="Optional language code, defaults to 'es'")
 

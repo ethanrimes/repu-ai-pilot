@@ -6,6 +6,7 @@ import type { ChatMessage, ChatResponse } from '@/lib/api/types';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
 import { useLanguage, useTranslations } from '@/hooks/useLanguage';
+import { useLanguageStore } from '@/stores/languageStore';
 import styles from '@/styles/chat.module.css';
 
 interface Message {
@@ -18,8 +19,11 @@ interface Message {
 export function ChatInterface() {
   const { language } = useLanguage();
   const { t } = useTranslations();
+  const { changeLanguageWithReset, isChangingLanguage } = useLanguageStore();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState(language);
+  const [initialLoaded, setInitialLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -29,6 +33,83 @@ export function ChatInterface() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Load initial conversation state
+  useEffect(() => {
+    const loadInitialConversation = async () => {
+      if (initialLoaded) return;
+      
+      try {
+        // Send empty message to trigger greeting if conversation hasn't started
+        const response = await chatApi.sendMessage({
+          message: '',
+          language: language
+        });
+        
+        const data: ChatResponse = response.data;
+        
+        if (data.message) {
+          const greetingMessage: Message = {
+            id: 'initial-greeting',
+            role: 'assistant',
+            content: data.message,
+            timestamp: new Date(data.timestamp)
+          };
+          setMessages([greetingMessage]);
+        }
+      } catch (error) {
+        console.error('Failed to load initial conversation:', error);
+        // Set a default greeting message if API fails
+        const defaultGreeting = language === 'en' 
+          ? "Hello! I'm RepuAI, your automotive parts assistant. How can I help you today?"
+          : "¡Hola! Soy RepuAI, tu asistente de repuestos automotrices. ¿En qué puedo ayudarte hoy?";
+        
+        setMessages([{
+          id: 'fallback-greeting',
+          role: 'assistant',
+          content: defaultGreeting,
+          timestamp: new Date()
+        }]);
+      } finally {
+        setInitialLoaded(true);
+      }
+    };
+
+    // Only load initial conversation if we don't have messages yet
+    if (messages.length === 0 && !isChangingLanguage && !initialLoaded) {
+      loadInitialConversation();
+    }
+  }, [language, messages.length, isChangingLanguage, initialLoaded]);
+
+  // Handle language changes
+  useEffect(() => {
+    const handleLanguageChange = async () => {
+      if (language !== currentLanguage && initialLoaded) {
+        console.log(`Language changed from ${currentLanguage} to ${language}`);
+        
+        try {
+          // Reset conversation and get greeting message
+          const greetingMessage = await changeLanguageWithReset(language);
+          
+          if (greetingMessage) {
+            // Clear existing messages and show the new greeting
+            setMessages([{
+              id: 'language-change-' + Date.now(),
+              role: 'assistant',
+              content: greetingMessage,
+              timestamp: new Date()
+            }]);
+          }
+          
+          setCurrentLanguage(language);
+        } catch (error) {
+          console.error('Failed to handle language change:', error);
+        }
+      }
+    };
+
+    handleLanguageChange();
+  }, [language, currentLanguage, changeLanguageWithReset, initialLoaded]);
 
   const sendMessage = async (content: string) => {
     const userMessage: Message = {
@@ -74,16 +155,22 @@ export function ChatInterface() {
     <div className={styles.chatContainer}>
       <div className={styles.messagesContainer}>
         <MessageList messages={messages} />
-        {isLoading && (
+        {(isLoading || isChangingLanguage) && (
           <div className={styles.thinkingIndicator}>
-            <span></span>
-            <span></span>
-            <span></span>
+            {isChangingLanguage ? (
+              <span>Changing language...</span>
+            ) : (
+              <>
+                <span></span>
+                <span></span>
+                <span></span>
+              </>
+            )}
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
-      <MessageInput onSend={sendMessage} disabled={isLoading} />
+      <MessageInput onSend={sendMessage} disabled={isLoading || isChangingLanguage} />
     </div>
   );
 }
