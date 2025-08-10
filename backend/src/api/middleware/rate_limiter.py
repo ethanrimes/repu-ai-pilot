@@ -7,8 +7,10 @@ from src.shared.utils.logger import get_logger
 from typing import Optional
 import time
 import uuid
+from src.config.settings import get_settings  # NEW
 
 logger = get_logger(__name__)
+settings = get_settings()  # NEW
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
     """Rate limiting middleware using Redis"""
@@ -18,23 +20,31 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.cache = get_cache_manager()
         self.requests_per_minute = requests_per_minute
         self.window_seconds = 60
+        self.daily_limit = settings.rate_limit_daily  # NEW
+        self.weekly_limit = settings.rate_limit_weekly  # NEW
     
     async def dispatch(self, request: Request, call_next):
         # Skip rate limiting for health checks
         if request.url.path in ["/health", "/docs", "/openapi.json"]:
             return await call_next(request)
         
-        # Get identifier (IP address or session ID)
         identifier = self._get_identifier(request)
+        endpoint = request.url.path
         
-        # Check rate limit
-        if not await self._check_rate_limit(identifier, request.url.path):
+        # Minute window check
+        if not await self._check_rate_limit(identifier, endpoint):
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                detail="Rate limit exceeded"
+                detail="Rate limit exceeded (per-minute)"
             )
         
-        # Process request
+        # Daily / weekly checks
+        if not await self._check_longer_limits(identifier):
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="Rate limit exceeded (daily/weekly)"
+            )
+        
         response = await call_next(request)
         return response
     
@@ -75,4 +85,29 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.cache.redis.zadd(key, {str(uuid.uuid4()): current_time})
         self.cache.redis.expire(key, self.window_seconds)
         
+        return True
+    
+    async def _check_longer_limits(self, identifier: str) -> bool:
+        """Increment and test daily and weekly counters."""
+        now = int(time.time())
+        # Daily key (UTC day)
+        day_key = time.strftime("%Y%m%d", time.gmtime(now))
+        week_key = time.strftime("%Y%W", time.gmtime(now))  # Year + week number
+        daily_counter_key = f"rate_daily:{identifier}:{day_key}"
+        weekly_counter_key = f"rate_weekly:{identifier}:{week_key}"
+        
+        pipe = self.cache.redis.pipeline()
+        pipe.incr(daily_counter_key, 1)
+        pipe.expire(daily_counter_key, 60 * 60 * 24 + 60)  # expire a little after a day
+        pipe.incr(weekly_counter_key, 1)
+        pipe.expire(weekly_counter_key, 60 * 60 * 24 * 7 + 300)  # expire a little after a week
+        results = pipe.execute()
+        daily_count = results[0]
+        weekly_count = results[2]
+        
+        if daily_count > self.daily_limit or weekly_count > self.weekly_limit:
+            logger.warning(
+                f"Rate limit exceeded for {identifier}: daily={daily_count}/{self.daily_limit}, weekly={weekly_count}/{self.weekly_limit}"
+            )
+            return False
         return True
