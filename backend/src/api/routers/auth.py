@@ -12,6 +12,7 @@ from src.infrastructure.database.repositories.company_repo import CustomerReposi
 from src.core.models.company import CustomerCreate
 from src.api.dependencies import get_db
 from src.shared.utils.logger import get_logger
+from src.core.services.auth_service import AuthService  # NEW IMPORT
 
 logger = get_logger(__name__)
 router = APIRouter(prefix="/auth", tags=["authentication"])
@@ -21,6 +22,7 @@ security = HTTPBearer()
 class LoginRequest(BaseModel):
     firebase_token: str
     channel: str = "web"
+    invite_code: Optional[str] = None  # NEW
 
 class LoginResponse(BaseModel):
     session_id: str
@@ -81,54 +83,14 @@ async def login(
     request: LoginRequest,
     db: DBSession = Depends(get_db)
 ):
-    """Login with Firebase token and create session"""
-    try:
-        # Verify Firebase token
-        decoded_token = verify_token(request.firebase_token)
-        firebase_uid = decoded_token["uid"]
-        email = decoded_token.get("email", "")
-        name = decoded_token.get("name", "")
-        
-        # Handle empty name - set to None if empty string
-        if not name or name.strip() == "":
-            name = None
-        
-    except Exception as e:
-        logger.error(f"Firebase token verification failed: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid Firebase token"
-        )
-    
-    # Get or create user
-    customer_repo = CustomerRepository(db)
-    user = await customer_repo.get_by_firebase_uid(firebase_uid)
-    
-    if not user:
-        # Create new user
-        user_create = CustomerCreate(
-            firebase_uid=firebase_uid,
-            email=email,
-            name=name
-        )
-        user = await customer_repo.create(user_create)
-        logger.info(f"Created new user: {user.id}")
-    
-    # Create session with database support
-    session_manager = get_session_manager(db)
-    session_info = await session_manager.create_session(
-        user_id=user.id,
-        firebase_uid=firebase_uid,
-        channel=request.channel
+    """Login with Firebase token and create session (invite enforced for new users)."""
+    auth_result = await AuthService.login(
+        db=db,
+        firebase_token=request.firebase_token,
+        channel=request.channel,
+        invite_code=request.invite_code,
     )
-    
-    return LoginResponse(
-        session_id=session_info["session_id"],
-        user_id=user.id,
-        email=user.email,
-        name=user.name,
-        expires_in=session_info["expires_in"]
-    )
+    return LoginResponse(**auth_result)
 
 @router.post("/logout")
 async def logout(
