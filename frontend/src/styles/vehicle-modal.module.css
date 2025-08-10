@@ -1,0 +1,338 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.closeButton:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.modalBody {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.dropdownContainer {
+  margin-bottom: 20px;
+}
+
+.dropdownContainer label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dropdown {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+
+.dropdown:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dropdown:disabled {
+  background-color: #f9fafb;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.vehicleListContainer {
+  margin-top: 24px;
+}
+
+.filtersHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.filtersHeader h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.filterToggle {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filterToggle:hover {
+  background: #e5e7eb;
+}
+
+.filtersPanel {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.filtersPanel h4 {
+  margin: 0 0 12px 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.yearFilters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.yearInput {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.yearInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.clearFiltersButton {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.clearFiltersButton:hover {
+  background: #dc2626;
+}
+
+.vehicleList {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.vehicleItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s;
+}
+
+.vehicleItem:last-child {
+  border-bottom: none;
+}
+
+.vehicleItem:hover {
+  background-color: #f9fafb;
+}
+
+.vehicleInfo {
+  flex: 1;
+  margin-right: 16px;
+}
+
+.vehicleInfo h4 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.vehicleInfo p {
+  margin: 4px 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.vehicleInfo p strong {
+  color: #374151;
+}
+
+.selectButton {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.selectButton:hover {
+  background: #2563eb;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.noResults {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .modalOverlay {
+    padding: 10px;
+  }
+  
+  .modalContent {
+    max-width: 100%;
+    max-height: 95vh;
+  }
+  
+  .modalHeader {
+    padding: 16px 20px;
+  }
+  
+  .modalBody {
+    padding: 20px;
+  }
+  
+  .vehicleItem {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .vehicleInfo {
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+  
+  .selectButton {
+    width: 100%;
+  }
+  
+  .yearFilters {
+    flex-direction: column;
+  }
+  
+  .filtersHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+}
+
+/* Scrollbar styling */
+.vehicleList::-webkit-scrollbar,
+.modalBody::-webkit-scrollbar {
+  width: 6px;
+}
+
+.vehicleList::-webkit-scrollbar-track,
+.modalBody::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.vehicleList::-webkit-scrollbar-thumb,
+.modalBody::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.vehicleList::-webkit-scrollbar-thumb:hover,
+.modalBody::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

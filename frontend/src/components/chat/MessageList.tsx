@@ -6,13 +6,20 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  buttons?: Array<{
+    id: string;
+    text: string;
+    disabled?: boolean;
+    note?: string;
+  }>;
 }
 
 interface MessageListProps {
   messages: Message[];
+  onButtonClick?: (buttonId: string) => void;
 }
 
-export function MessageList({ messages }: MessageListProps) {
+export function MessageList({ messages, onButtonClick }: MessageListProps) {
   return (
     <div className={styles.messageList}>
       {messages.map((message) => (
@@ -22,37 +29,56 @@ export function MessageList({ messages }: MessageListProps) {
         >
           <div className={styles.messageContent}>
             {message.role === 'assistant' ? (
-              <ReactMarkdown
-                components={{
-                  // Custom styling for markdown elements
-                  p: ({ children }) => <p className={styles.markdownP}>{children}</p>,
-                  ul: ({ children }) => <ul className={styles.markdownUl}>{children}</ul>,
-                  ol: ({ children }) => <ol className={styles.markdownOl}>{children}</ol>,
-                  li: ({ children }) => <li className={styles.markdownLi}>{children}</li>,
-                  strong: ({ children }) => <strong className={styles.markdownStrong}>{children}</strong>,
-                  em: ({ children }) => <em className={styles.markdownEm}>{children}</em>,
-                  code: ({ children, className }) => {
-                    const isInline = !className;
-                    return isInline ? (
-                      <code className={styles.markdownInlineCode}>{children}</code>
-                    ) : (
-                      <code className={styles.markdownCodeBlock}>{children}</code>
-                    );
-                  },
-                  pre: ({ children }) => <pre className={styles.markdownPre}>{children}</pre>,
-                  blockquote: ({ children }) => <blockquote className={styles.markdownBlockquote}>{children}</blockquote>,
-                  h1: ({ children }) => <h1 className={styles.markdownH1}>{children}</h1>,
-                  h2: ({ children }) => <h2 className={styles.markdownH2}>{children}</h2>,
-                  h3: ({ children }) => <h3 className={styles.markdownH3}>{children}</h3>,
-                  a: ({ children, href }) => (
-                    <a href={href} target="_blank" rel="noopener noreferrer" className={styles.markdownLink}>
-                      {children}
-                    </a>
-                  ),
-                }}
-              >
-                {message.content}
-              </ReactMarkdown>
+              <>
+                <ReactMarkdown
+                  components={{
+                    // Custom styling for markdown elements
+                    p: ({ children }) => <p className={styles.markdownP}>{children}</p>,
+                    ul: ({ children }) => <ul className={styles.markdownUl}>{children}</ul>,
+                    ol: ({ children }) => <ol className={styles.markdownOl}>{children}</ol>,
+                    li: ({ children }) => <li className={styles.markdownLi}>{children}</li>,
+                    strong: ({ children }) => <strong className={styles.markdownStrong}>{children}</strong>,
+                    em: ({ children }) => <em className={styles.markdownEm}>{children}</em>,
+                    code: ({ children, className }) => {
+                      const isInline = !className;
+                      return isInline ? (
+                        <code className={styles.markdownInlineCode}>{children}</code>
+                      ) : (
+                        <code className={styles.markdownCodeBlock}>{children}</code>
+                      );
+                    },
+                    pre: ({ children }) => <pre className={styles.markdownPre}>{children}</pre>,
+                    blockquote: ({ children }) => <blockquote className={styles.markdownBlockquote}>{children}</blockquote>,
+                    h1: ({ children }) => <h1 className={styles.markdownH1}>{children}</h1>,
+                    h2: ({ children }) => <h2 className={styles.markdownH2}>{children}</h2>,
+                    h3: ({ children }) => <h3 className={styles.markdownH3}>{children}</h3>,
+                    a: ({ children, href }) => (
+                      <a href={href} target="_blank" rel="noopener noreferrer" className={styles.markdownLink}>
+                        {children}
+                      </a>
+                    ),
+                  }}
+                >
+                  {message.content}
+                </ReactMarkdown>
+                
+                {/* Render action buttons if present */}
+                {message.buttons && message.buttons.length > 0 && (
+                  <div className={styles.messageButtons}>
+                    {message.buttons.map((button) => (
+                      <button
+                        key={button.id}
+                        className={`${styles.actionButton} ${button.disabled ? styles.disabled : ''}`}
+                        onClick={() => !button.disabled && onButtonClick?.(button.id)}
+                        disabled={button.disabled}
+                      >
+                        {button.text}
+                        {button.note && <span className={styles.buttonNote}>{button.note}</span>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
             ) : (
               // User messages don't need markdown parsing
               message.content

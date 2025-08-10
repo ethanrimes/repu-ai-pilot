@@ -15,7 +15,13 @@ VALID_TRANSITIONS = {
         ConversationState.ERROR
     ],
     ConversationState.PRODUCT_SEARCH_INIT: [
-        ConversationState.VEHICLE_INFO_COLLECTION,
+        ConversationState.VEHICLE_IDENTIFICATION,  # Now goes to vehicle identification
+        ConversationState.INTENT_MENU,
+        ConversationState.ERROR
+    ],
+    ConversationState.VEHICLE_IDENTIFICATION: [
+        ConversationState.PART_TYPE_SELECTION,  # After vehicle is identified
+        ConversationState.PRODUCT_SEARCH_INIT,  # Go back if needed
         ConversationState.INTENT_MENU,
         ConversationState.ERROR
     ],

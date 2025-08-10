@@ -5,12 +5,8 @@ from pathlib import Path
 
 from ...models import ConversationSession, ConversationState
 from ..base import BaseJourney
-# from .states import (
-#     ProductSearchInitState,
-#     VehicleInfoCollectionState,
-#     PartTypeSelectionState,
-#     ProductPresentationState
-# )
+from .states import ProductSearchInitState
+from .vehicle_identification import VehicleIdentificationState
 
 class ProductSearchJourney(BaseJourney):
     """Product search customer journey"""
@@ -22,12 +18,13 @@ class ProductSearchJourney(BaseJourney):
             self.templates = yaml.safe_load(f)
         
         # Initialize states
-        # self.states = {
-        #     ConversationState.PRODUCT_SEARCH_INIT: ProductSearchInitState(self.templates),
-        #     ConversationState.VEHICLE_INFO_COLLECTION: VehicleInfoCollectionState(self.templates),
-        #     ConversationState.PART_TYPE_SELECTION: PartTypeSelectionState(self.templates),
-        #     ConversationState.PRODUCT_PRESENTATION: ProductPresentationState(self.templates),
-        # }
+        self.states = {
+            ConversationState.PRODUCT_SEARCH_INIT: ProductSearchInitState(self.templates),
+            ConversationState.VEHICLE_IDENTIFICATION: VehicleIdentificationState(self.templates),
+            # ConversationState.VEHICLE_INFO_COLLECTION: VehicleInfoCollectionState(self.templates),
+            # ConversationState.PART_TYPE_SELECTION: PartTypeSelectionState(self.templates),
+            # ConversationState.PRODUCT_PRESENTATION: ProductPresentationState(self.templates),
+        }
     
     def handles_state(self, state: ConversationState) -> bool:
         """Check if this journey handles the given state"""

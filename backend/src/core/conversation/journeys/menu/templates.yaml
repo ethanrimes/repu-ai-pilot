@@ -41,17 +41,9 @@ es:
     Por favor selecciona la opción 1 para iniciar una búsqueda de productos.
 
   product_search_selected: |
-    ¡Perfecto! Vamos a buscar los repuestos que necesitas. 🔍
+    ¡Perfecto! Te ayudaré a encontrar los repuestos que necesitas para tu vehículo. �
     
-    Para ayudarte mejor, necesito información sobre tu vehículo. Por favor proporcióname:
-    
-    🚗 **Marca del vehículo** (ej: Toyota, Chevrolet, Renault)
-    📅 **Año** (ej: 2020, 2018)
-    🏷️ **Modelo** (ej: Corolla, Spark, Logan)
-    
-    Puedes escribir algo como: "Toyota Corolla 2020" o dar los detalles paso a paso.
-    
-    ¿Cuál es la información de tu vehículo?
+    Primero necesito identificar tu vehículo específico para asegurarme de que los repuestos sean compatibles.
 
   intent_names:
     TECHNICAL_INFO: "Información Técnica"

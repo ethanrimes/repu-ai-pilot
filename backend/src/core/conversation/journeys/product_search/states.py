@@ -5,6 +5,7 @@
 from typing import Dict, Any, Optional, Tuple
 from src.core.conversation.models import ConversationSession, ConversationState
 from src.core.conversation.journeys.base import BaseState
+from src.core.conversation.journeys.product_search.vehicle_identification import VehicleIdentificationState
 from src.shared.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -20,30 +21,52 @@ class ProductSearchInitState(BaseState):
         session: ConversationSession,
         user_message: str
     ) -> Tuple[str, Optional[ConversationState], Optional[Dict[str, Any]]]:
-        """Process vehicle information"""
+        """Process initial product search request - redirect to vehicle identification"""
         
         language = session.context.language
         
-        # Parse vehicle info
-        vehicle_info = self.vehicle_parser.parse(user_message)
+        # Import here to avoid circular imports
+        import json
+        from src.core.services.tecdoc_service import TecDocService
         
-        if vehicle_info.confidence < 0.5:
-            # Need more info
-            response = self.get_template("need_vehicle_info", language)
-            return response, ConversationState.VEHICLE_INFO_COLLECTION, None
+        # Initialize TecDoc service
+        tecdoc_service = TecDocService()
         
-        # Store vehicle info and move to part selection
-        context_updates = {
-            "vehicle_make": vehicle_info.make,
-            "vehicle_model": vehicle_info.model,
-            "vehicle_year": vehicle_info.year
-        }
-        
-        response = self.get_template("vehicle_received", language).format(
-            make=vehicle_info.make or "Unknown",
-            model=vehicle_info.model or "Unknown",
-            year=vehicle_info.year or "Unknown"
-        )
-        response += "\n\n" + self.get_template("ask_part_type", language)
-        
-        return response, ConversationState.PART_TYPE_SELECTION, context_updates
+        try:
+            # Get vehicle types from TecDoc service
+            vehicle_types_result = await tecdoc_service.list_vehicle_types()
+            vehicle_types = [
+                {"id": vt.id, "vehicleType": vt.vehicleType} 
+                for vt in vehicle_types_result.root
+            ]
+            
+            # Get templates from the same template structure used by this journey
+            lang_templates = self.templates.get(language, self.templates.get("es", {}))
+            
+            # Directly return vehicle identification options with vehicle types
+            response = json.dumps({
+                "type": "VEHICLE_ID_OPTIONS",
+                "message": lang_templates.get("vehicle_identification_prompt", "Para identificar tu vehículo, puedes elegir una de estas opciones:"),
+                "buttons": [
+                    {
+                        "id": "VIN_LICENSE_OPTION",
+                        "text": lang_templates.get("vin_license_button", "🔍 Proceder con VIN o matrícula"),
+                        "disabled": True,
+                        "note": lang_templates.get("not_implemented_note", "(No implementado)")
+                    },
+                    {
+                        "id": "MAKE_MODEL_OPTION", 
+                        "text": lang_templates.get("make_model_button", "🚗 Buscar por marca y modelo"),
+                        "disabled": False
+                    }
+                ],
+                "vehicleTypes": vehicle_types
+            })
+            
+            return response, ConversationState.VEHICLE_IDENTIFICATION, None
+            
+        except Exception as e:
+            logger.error(f"Error in ProductSearchInitState: {e}")
+            # Fallback to simple transition
+            response = ""
+            return response, ConversationState.VEHICLE_IDENTIFICATION, None
