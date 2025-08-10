@@ -15,7 +15,7 @@ export interface LoginResponse {
   session_id: string;
   user_id: number;
   email: string;
-  name: string;
+  name: string | null;
   expires_in: number;
 }
 
@@ -33,23 +33,22 @@ export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  timestamp: Date;
+  timestamp: string | Date;
   metadata?: Record<string, any>;
 }
 
 export interface ChatRequest {
   message: string;
-  language: 'es' | 'en';
-  session_id?: string;
+  language?: 'es' | 'en'; // optional now defaulting to backend default 'es'
+  session_id?: string; // not actually used anymore; kept for backward compat
   context?: Record<string, any>;
 }
 
 export interface ChatResponse {
-  response: string;
-  intent?: string;
-  confidence?: number;
-  suggestions?: string[];
-  metadata?: Record<string, any>;
+  message: string; // backend returns 'message'
+  message_id: string;
+  timestamp: string;
+  usage?: Record<string, any>;
 }
 
 // Document Types

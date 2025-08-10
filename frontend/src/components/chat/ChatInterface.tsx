@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { apiClient } from '@/lib/api/client';
 import { chatApi } from '@/lib/api/endpoints';
-import type { ChatMessage } from '@/lib/api/types';
+import type { ChatMessage, ChatResponse } from '@/lib/api/types';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
 import styles from '@/styles/chat.module.css';
@@ -29,7 +28,6 @@ export function ChatInterface() {
   }, [messages]);
 
   const sendMessage = async (content: string) => {
-    // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -40,23 +38,23 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
-      // Send to backend
       const response = await chatApi.sendMessage({
         message: content,
         language: 'es'
-        });
+      });
 
-        const assistantMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+      const data: ChatResponse = response.data;
+
+      const assistantMessage: Message = {
+        id: data.message_id || (Date.now() + 1).toString(),
         role: 'assistant',
-        content: response.data.response,
-        timestamp: new Date()
-        };
+        content: data.message, // map backend 'message' field
+        timestamp: new Date(data.timestamp)
+      };
 
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Chat error:', error);
-      // Add error message
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',

@@ -33,11 +33,12 @@ export const chatApi = {
   sendMessage: (data: ChatRequest) => 
     apiClient.post<ChatResponse>('/chat/message', data),
   
-  getHistory: (sessionId: string) => 
-    apiClient.get(`/chat/history/${sessionId}`),
+  // Updated to rely on Authorization header session rather than URL param
+  getHistory: () => 
+    apiClient.get('/chat/history'),
   
-  clearHistory: (sessionId: string) => 
-    apiClient.delete(`/chat/history/${sessionId}`)
+  clearHistory: () => 
+    apiClient.delete('/chat/history')
 };
 
 // Document/Search endpoints

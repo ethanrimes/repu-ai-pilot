@@ -35,6 +35,13 @@ export function useSession() {
       // Store session ID in localStorage
       localStorage.setItem('session_id', sessionData.sessionId);
       
+      // ALSO set cookie for edge middleware route protection
+      try {
+        document.cookie = `session_id=${sessionData.sessionId}; path=/; max-age=${sessionData.expiresIn}; SameSite=Lax`;
+      } catch (e) {
+        console.warn('Failed to set session cookie', e);
+      }
+      
       // Set up API client with session
       apiClient.defaults.headers.common['Authorization'] = `Bearer ${sessionData.sessionId}`;
       
