@@ -1,4 +1,4 @@
-"""TecDoc API Pydantic Schemas - Comprehensive models for all API responses"""
+"""TecDoc API Pydantic Schemas - Corrected models matching actual API responses"""
 
 from typing import Any, Dict, List, Optional, Union
 from datetime import date
@@ -67,128 +67,126 @@ class ArticleExtended(ArticleBase):
     compatibleCars: Optional[List[CompatibleCar]] = None
 
 
-# Article search responses
-class ArticleSearchResult(BaseModel):
-    articleId: int
-    articleNo: str
-    articleProductName: str
-    supplierName: str
-    supplierId: int
-    articleMediaType: int
-    articleMediaFileName: str
-    imageLink: str
-    imageMedia: str
-    s3ImageLink: str
+# Language models (API returns direct array)
+class Language(BaseModel):
+    lngId: str
+    lngIso2: Optional[str] = None  # Can be null in API response
+    lngDescription: str
 
 
-class ArticleSearch(BaseModel):
-    articleSearchNr: str
-    countArticles: int
-    articles: List[ArticleSearchResult]
+class LanguagesList(RootModel[List[Language]]):
+    root: List[Language]
 
 
-class ArticleSearchWithSupplier(ArticleSearch):
-    pass  # Same structure as ArticleSearch
+# CORRECTED: Language details should match the JSON structure
+class LanguageDetails(BaseModel):
+    lngId: str
+    lngIso2: Optional[str] = None
+    lngDescription: str
 
 
-# Article media info response (root is array)
-class ArticleMediaInfoList(RootModel[List[ArticleMediaInfo]]):
-    root: List[ArticleMediaInfo]
+# Country models
+class Country(BaseModel):
+    id: int  # Changed from countryId
+    couCode: str  # Changed from countryCode
+    countryName: str
 
 
-# Article number details response
-class ArticleNumberDetailsArticle(ArticleExtended):
-    pass
+# CORRECTED: CountriesList should have 'countries' field, not be a RootModel
+class CountriesList(BaseModel):
+    countries: List[Country]
 
 
-class ArticleNumberDetails(BaseModel):
-    articleNo: str
-    countArticles: int
-    articles: List[ArticleNumberDetailsArticle]
+# CORRECTED: CountryDetails to match actual response
+class CountryDetails(BaseModel):
+    id: int
+    country_name: str
+    couCode: str
 
 
-# Article specification details response
-class ArticleSpecificationDetails(BaseModel):
-    articleId: str
-    article: ArticleInfo
-    articleAllSpecifications: List[ArticleSpecification]
-    articleEanNo: Optional[EanNumbers] = None
-    articleOemNo: Optional[List[OemNumber]] = None
+# CORRECTED: CountriesByLanguage structure
+class CountryByLanguage(BaseModel):
+    id: int
+    couCode: str
+    countryName: str
 
 
-# Article complete details response
-class ArticleCompleteDetailsArticle(ArticleExtended):
-    pass
+class CountriesByLanguage(BaseModel):
+    countries: List[CountryByLanguage]
 
 
-class ArticleCompleteDetails(BaseModel):
-    article: ArticleCompleteDetailsArticle
+# Vehicle types list response (API returns direct array)
+class VehicleType(BaseModel):
+    id: int
+    vehicleType: str
 
 
-# Articles list response
-class ArticleListItem(BaseModel):
-    articleId: int
-    articleNo: str
-    supplierName: str
-    supplierId: int
-    articleProductName: str
-    productId: int
-    articleMediaType: int
-    articleMediaFileName: str
-    imageLink: str
-    imageMedia: str
-    s3ImageLink: str
+class VehicleTypesList(RootModel[List[VehicleType]]):
+    root: List[VehicleType]
 
 
-class ArticlesList(BaseModel):
-    vehicleId: int
-    productGroupId: int
-    countArticles: int
-    articles: List[ArticleListItem]
+# Suppliers list response (API returns direct array)
+class Supplier(BaseModel):
+    supId: str
+    supBrand: str
+    supMatchCode: str
+    supLogoName: str
 
 
-# Category V1 response
-class CategoryV1Item(BaseModel):
-    level: int
-    levelText_1: str
-    levelId_1: str
-    levelText_2: Optional[str] = None
-    levelId_2: Optional[str] = None
-    levelText_3: Optional[str] = None
-    levelId_3: Optional[str] = None
-    levelText_4: Optional[str] = None
-    levelId_4: Optional[str] = None
+class SuppliersList(RootModel[List[Supplier]]):
+    root: List[Supplier]
 
 
-class CategoryV1(BaseModel):
-    categories: List[CategoryV1Item]
+# Manufacturers list response
+class ManufacturerListItem(BaseModel):
+    manufacturerId: int
+    brand: str
 
 
-# Category V2 response - dynamic nested structure
-class CategoryV2Node(BaseModel):
-    categoryId: int
-    categoryName: str
-    level: int
-    children: Dict[str, 'CategoryV2Node'] = Field(default_factory=dict)
+class ManufacturersList(BaseModel):
+    countManufactures: int
+    manufacturers: List[ManufacturerListItem]
 
 
-class CategoryV2(BaseModel):
-    categories: Dict[str, CategoryV2Node]
+# Manufacturer details response
+class ManufacturerDetails(BaseModel):
+    mfaId: int
+    mfaBrand: str
+    mfaCv: bool
+    mfaDc: bool
+    mfaEng: bool
+    mfaMtb: bool
+    mfaPc: bool
+    mfaVgl: bool
+    mfaAxl: bool
+    mfaMatchCode: str
+    mfaModelsCount: int
+    mfaPcCtm: int
+    mfaCvCtm: int
 
 
-# Category V3 response - dynamic nested structure with different format
-class CategoryV3Children(BaseModel):
-    text: str
-    children: Union[Dict[str, 'CategoryV3Children'], List[Any]] = Field(default_factory=list)
+# Models list response
+class ModelListItem(BaseModel):
+    modelId: int
+    modelName: str
+    modelYearFrom: Optional[str] = None
+    modelYearTo: Optional[str] = None
 
 
-class CategoryV3(BaseModel):
-    categories: Dict[str, CategoryV3Children]
+class ModelsList(BaseModel):
+    countModels: int
+    models: List[ModelListItem]
 
 
-# Update forward references for recursive models
-CategoryV2Node.model_rebuild()
-CategoryV3Children.model_rebuild()
+# Model details responses
+class ModelDetails(BaseModel):
+    modelId: int
+    modelName: str
+
+
+class ModelDetailsByVehicle(BaseModel):
+    modelId: int
+    modelName: str
 
 
 # Vehicle engine types response
@@ -248,112 +246,131 @@ class VehicleTypeDetails(BaseModel):
     vehicleTypeDetails: VehicleTypeDetailsInfo
 
 
-# Model details responses
-class ModelDetails(BaseModel):
-    modelId: int
-    modelName: str
+# Category V1 response
+class CategoryV1Item(BaseModel):
+    level: int
+    levelText_1: str
+    levelId_1: str
+    levelText_2: Optional[str] = None
+    levelId_2: Optional[str] = None
+    levelText_3: Optional[str] = None
+    levelId_3: Optional[str] = None
+    levelText_4: Optional[str] = None
+    levelId_4: Optional[str] = None
 
 
-class ModelDetailsByVehicle(ModelDetails):
-    pass  # Same structure
+class CategoryV1(BaseModel):
+    categories: List[CategoryV1Item]
 
 
-# Models list response
-class ModelListItem(BaseModel):
-    modelId: int
-    modelName: str
-    modelYearFrom: str
-    modelYearTo: Optional[str] = None
+# Category V2 response - dynamic nested structure
+class CategoryV2Node(BaseModel):
+    categoryId: int
+    categoryName: str
+    level: int
+    children: Dict[str, 'CategoryV2Node'] = Field(default_factory=dict)
 
 
-class ModelsList(BaseModel):
-    countModels: int
-    models: List[ModelListItem]
+class CategoryV2(BaseModel):
+    categories: Dict[str, CategoryV2Node]
 
 
-# Manufacturer details response
-class ManufacturerDetails(BaseModel):
-    mfaId: int
-    mfaBrand: str
-    mfaCv: bool
-    mfaDc: bool
-    mfaEng: bool
-    mfaMtb: bool
-    mfaPc: bool
-    mfaVgl: bool
-    mfaAxl: bool
-    mfaMatchCode: str
-    mfaModelsCount: int
-    mfaPcCtm: int
-    mfaCvCtm: int
+# Category V3 response - dynamic nested structure with different format
+class CategoryV3Children(BaseModel):
+    text: str
+    children: Union[Dict[str, 'CategoryV3Children'], List[Any]] = Field(default_factory=list)
 
 
-# Manufacturers list response
-class ManufacturerListItem(BaseModel):
-    manufacturerId: int
-    brand: str
+class CategoryV3(BaseModel):
+    categories: Dict[str, CategoryV3Children]
 
 
-class ManufacturersList(BaseModel):
-    countManufactures: int
-    manufacturers: List[ManufacturerListItem]
+# Update forward references for recursive models
+CategoryV2Node.model_rebuild()
+CategoryV3Children.model_rebuild()
 
 
-# Suppliers list response (root is array)
-class Supplier(BaseModel):
-    supId: str
-    supBrand: str
-    supMatchCode: str
-    supLogoName: str
+# Article search responses
+class ArticleSearchResult(BaseModel):
+    articleId: int
+    articleNo: str
+    articleProductName: str
+    supplierName: str
+    supplierId: int
+    articleMediaType: int
+    articleMediaFileName: str
+    imageLink: str
+    imageMedia: str
+    s3ImageLink: str
 
 
-class SuppliersList(RootModel[List[Supplier]]):
-    root: List[Supplier]
+class ArticleSearch(BaseModel):
+    articleSearchNr: str
+    countArticles: int
+    articles: List[ArticleSearchResult]
 
 
-# Vehicle types list response (root is array)
-class VehicleType(BaseModel):
-    id: int
-    vehicleType: str
+class ArticleSearchWithSupplier(BaseModel):
+    articleSearchNr: str
+    countArticles: int
+    articles: List[ArticleSearchResult]
 
 
-class VehicleTypesList(RootModel[List[VehicleType]]):
-    root: List[VehicleType]
+# Article media info response (root is array)
+class ArticleMediaInfoList(RootModel[List[ArticleMediaInfo]]):
+    root: List[ArticleMediaInfo]
 
 
-# Language models (inferred from API structure)
-class Language(BaseModel):
-    langId: int
-    langName: str
-    langCode: str
+# Article number details response
+class ArticleNumberDetailsArticle(ArticleExtended):
+    pass
 
 
-class LanguagesList(BaseModel):
-    languages: List[Language]
+class ArticleNumberDetails(BaseModel):
+    articleNo: str
+    countArticles: int
+    articles: List[ArticleNumberDetailsArticle]
 
 
-class LanguageDetails(BaseModel):
-    language: Language
+# CORRECTED: Article specification details response
+class ArticleSpecificationDetails(BaseModel):
+    articleId: str
+    article: ArticleInfo
+    articleAllSpecifications: List[ArticleSpecification]
+    articleEanNo: Optional[EanNumbers] = None
+    articleOemNo: Optional[List[OemNumber]] = None
 
 
-# Country models (inferred from API structure)
-class Country(BaseModel):
-    countryId: int
-    countryName: str
-    countryCode: str
+# Article complete details response
+class ArticleCompleteDetailsArticle(ArticleExtended):
+    pass
 
 
-class CountriesList(BaseModel):
-    countries: List[Country]
+class ArticleCompleteDetails(BaseModel):
+    article: ArticleCompleteDetailsArticle
 
 
-class CountryDetails(BaseModel):
-    country: Country
+# Articles list response
+class ArticleListItem(BaseModel):
+    articleId: int
+    articleNo: str
+    supplierName: str
+    supplierId: int
+    articleProductName: str
+    productId: int
+    articleMediaType: int
+    articleMediaFileName: str
+    imageLink: str
+    imageMedia: str
+    s3ImageLink: str
 
 
-class CountriesByLanguage(BaseModel):
-    langId: int
-    countries: List[Country]
+class ArticlesList(BaseModel):
+    vehicleId: int
+    productGroupId: int
+    countArticles: int
+    articles: List[ArticleListItem]
+
 
 # Export all models for easy import
 __all__ = [
@@ -404,4 +421,3 @@ __all__ = [
     'OemNumber',
     'EanNumbers',
 ]
-
