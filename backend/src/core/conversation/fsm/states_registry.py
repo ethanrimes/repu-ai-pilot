@@ -1,12 +1,9 @@
-# backend/src/core/conversation/fsm/states.py
+# backend/src/core/conversation/fsm/states_registry.py
 
-from typing import Dict, Any, Optional, Tuple
-from datetime import datetime
-
-from src.core.conversation.fsm.state_manager import ConversationState, ConversationSession
+from typing import Dict, Type
+from src.core.conversation.fsm.state_manager import ConversationState
 from src.core.conversation.fsm.states.base import BaseState
 from src.core.conversation.fsm.states.intent_menu import IntentMenuState
-from src.core.conversation.utils.message_formatter import MessageFormatter
 from src.shared.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -22,8 +19,12 @@ class ProductSearchInitState(BaseState):
         """This state doesn't show an entry message as it's handled by the previous state"""
         return ""
     
-    async def process_message(self, session: ConversationSession, user_message: str) -> Tuple[str, Optional[ConversationState], Optional[Dict[str, Any]]]:
+    async def process_message(self, session, user_message: str):
         """Handle vehicle information collection"""
+        from typing import Dict, Any, Optional, Tuple
+        from datetime import datetime
+        from src.core.conversation.utils.message_formatter import MessageFormatter
+        
         language = session.context.language
         
         # For now, we'll transition to a more advanced state handling
@@ -72,6 +73,8 @@ class ErrorState(BaseState):
     
     def get_entry_message(self, language: str = "es") -> str:
         """Get error message"""
+        from src.core.conversation.utils.message_formatter import MessageFormatter
+        
         if language == "en":
             content = """Sorry, an unexpected error has occurred. 😔
 
@@ -87,13 +90,13 @@ Por favor intenta de nuevo o contacta a nuestro equipo de soporte si el problema
         
         return MessageFormatter.format_for_chat(content)
     
-    async def process_message(self, session: ConversationSession, user_message: str) -> Tuple[str, Optional[ConversationState], Optional[Dict[str, Any]]]:
+    async def process_message(self, session, user_message: str):
         """Handle error state recovery"""
         # Reset to intent menu
         return self.get_entry_message(session.context.language), ConversationState.INTENT_MENU, None
 
 # State factory
-STATE_REGISTRY = {
+STATE_REGISTRY: Dict[ConversationState, Type[BaseState]] = {
     ConversationState.INTENT_MENU: IntentMenuState,
     ConversationState.PRODUCT_SEARCH_INIT: ProductSearchInitState,
     ConversationState.ERROR: ErrorState,
