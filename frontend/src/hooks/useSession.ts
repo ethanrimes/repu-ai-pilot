@@ -1,5 +1,5 @@
 // frontend/src/hooks/useSession.ts
-
+"use client";
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { apiClient } from '@/lib/api/client';

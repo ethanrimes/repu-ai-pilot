@@ -1,3 +1,5 @@
+"use client";
+
 import ReactMarkdown from 'react-markdown';
 import styles from '@/styles/chat.module.css';
 

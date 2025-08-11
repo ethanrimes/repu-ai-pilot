@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import { useTranslations } from '@/hooks/useLanguage';
 import styles from '@/styles/chat.module.css';

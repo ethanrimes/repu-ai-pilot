@@ -1,24 +1,32 @@
-// src/app/[locale]/page.tsx
-// Path: src/app/[locale]/page.tsx
+// frontend/src/app/[locale]/page.tsx
+'use client';
 
 import { ChatInterface } from '@/components/chat/ChatInterface';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 import { Header } from '@/components/layout/Header';
-import { getTranslations } from '@/i18n/config';
+import { useEffect } from 'react';
+import { useLanguageStore, Language } from '@/stores/languageStore';
 
-export default async function ChatPage({ 
+export default function ChatPage({ 
   params: { locale } 
 }: { 
   params: { locale: string } 
 }) {
-  const t = await getTranslations(locale);
+  const { setLanguage } = useLanguageStore();
+
+  useEffect(() => {
+    // Set language based on URL locale
+    if (locale === 'en' || locale === 'es') {
+      setLanguage(locale as Language);
+    }
+  }, [locale, setLanguage]);
 
   return (
     <AuthGuard>
       <div className="flex flex-col h-screen bg-gray-50">
-        <Header locale={locale} />
+        <Header />
         <main className="flex-1 container mx-auto px-4 py-6 max-w-4xl">
-          <ChatInterface locale={locale} translations={t} />
+          <ChatInterface />
         </main>
       </div>
     </AuthGuard>
