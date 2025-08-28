@@ -21,7 +21,7 @@ VALID_TRANSITIONS = {
     ],
     ConversationState.VEHICLE_IDENTIFICATION: [
         ConversationState.PART_TYPE_SELECTION,  # After vehicle is identified
-        ConversationState.PRODUCT_SEARCH_INIT,  # Go back if needed
+        ConversationState.PRODUCT_SEARCH_INIT,
         ConversationState.INTENT_MENU,
         ConversationState.ERROR
     ],
@@ -32,7 +32,7 @@ VALID_TRANSITIONS = {
     ],
     ConversationState.PART_TYPE_SELECTION: [
         ConversationState.PRODUCT_PRESENTATION,
-        ConversationState.VEHICLE_INFO_COLLECTION,
+        ConversationState.VEHICLE_IDENTIFICATION,  # Go back if needed
         ConversationState.ERROR
     ],
     ConversationState.PRODUCT_PRESENTATION: [

@@ -7,6 +7,7 @@ from ...models import ConversationSession, ConversationState
 from ..base import BaseJourney
 from .states import ProductSearchInitState
 from .vehicle_identification import VehicleIdentificationState
+from .part_selection import PartSelectionState
 
 class ProductSearchJourney(BaseJourney):
     """Product search customer journey"""
@@ -21,8 +22,8 @@ class ProductSearchJourney(BaseJourney):
         self.states = {
             ConversationState.PRODUCT_SEARCH_INIT: ProductSearchInitState(self.templates),
             ConversationState.VEHICLE_IDENTIFICATION: VehicleIdentificationState(self.templates),
+            ConversationState.PART_TYPE_SELECTION: PartSelectionState(self.templates),  # Add this
             # ConversationState.VEHICLE_INFO_COLLECTION: VehicleInfoCollectionState(self.templates),
-            # ConversationState.PART_TYPE_SELECTION: PartTypeSelectionState(self.templates),
             # ConversationState.PRODUCT_PRESENTATION: ProductPresentationState(self.templates),
         }
     

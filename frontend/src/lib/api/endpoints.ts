@@ -1,3 +1,4 @@
+// frontend/src/lib/api/endpoints.ts
 import { apiClient } from './client';
 import type {
   LoginRequest,

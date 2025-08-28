@@ -10,7 +10,8 @@ from sqlalchemy.orm import sessionmaker
 from src.infrastructure.cache.session_manager import SessionManager
 
 # Import routers
-from src.api.routers import auth, chat, documents, health
+from src.api.routers import auth, chat, documents, health, inventory  # Add inventory
+
 
 # Import middleware
 from src.api.middleware.error_handler import ErrorHandlerMiddleware
@@ -55,6 +56,7 @@ app.add_middleware(LanguageDetectorMiddleware)
 app.include_router(health.router)
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(chat.router, prefix="/api/v1")
+app.include_router(inventory.router, prefix="/api/v1")  # Add this line
 # app.include_router(documents.router, prefix="/api/v1")
 
 # Initialize scheduler

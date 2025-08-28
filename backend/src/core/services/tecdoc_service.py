@@ -38,15 +38,25 @@ class TecDocService:
     # Internals
     # ------------------------------------------------------------
     async def _get(self, path: str, model: Type[T]) -> T:
+        from src.shared.utils.logger import get_logger
+        logger = get_logger(__name__)
+        
+        logger.info(f"[TECDOC_DEBUG] Requesting path: {path}")
+        
         if path in self._cache:
+            logger.info(f"[TECDOC_DEBUG] Cache hit for path: {path}")
             return self._cache[path]  # type: ignore[return-value]
 
+        logger.info(f"[TECDOC_DEBUG] Cache miss, making API call to: {path}")
         async with self._client as c:
             raw = await c.get(path)
 
+        logger.info(f"[TECDOC_DEBUG] Got response, validating against {model.__name__}")
         try:
             parsed: T = model.model_validate(raw)
+            logger.info(f"[TECDOC_DEBUG] Successfully parsed {model.__name__}")
         except ValidationError as e:
+            logger.error(f"[TECDOC_DEBUG] Validation error for {model.__name__}: {e}")
             raise TecDocSchemaError(path, model, raw, e) from e
 
         self._cache[path] = parsed
@@ -167,10 +177,24 @@ class TecDocService:
     async def category_v3(
         self, vehicle_id: int, manufacturer_id: int, lang_id: int, country_filter_id: int, type_id: int
     ) -> M.CategoryV3:
-        return await self._get(
+        from src.shared.utils.logger import get_logger
+        logger = get_logger(__name__)
+        
+        logger.info(f"[TECDOC_DEBUG] category_v3 called with vehicle_id={vehicle_id}, manufacturer_id={manufacturer_id}, lang_id={lang_id}, country_filter_id={country_filter_id}, type_id={type_id}")
+        
+        result = await self._get(
             ep.category_variant_3(vehicle_id, manufacturer_id, lang_id, country_filter_id, type_id),
             M.CategoryV3,
         )
+        
+        if hasattr(result, 'categories'):
+            logger.info(f"[TECDOC_DEBUG] category_v3 returned {len(result.categories) if result.categories else 0} categories")
+            if result.categories:
+                logger.info(f"[TECDOC_DEBUG] Sample category keys: {list(result.categories.keys())[:5]}")
+        else:
+            logger.warning(f"[TECDOC_DEBUG] category_v3 result has no categories attribute")
+        
+        return result
 
     # ------------------------------------------------------------
     # Articles

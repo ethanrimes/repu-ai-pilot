@@ -43,42 +43,41 @@ class ConversationContext:
     # Current journey
     current_journey: Optional[str] = None
     selected_intent: Optional[CustomerIntent] = None
-    
+
     # Vehicle info
-    vehicle_make: Optional[str] = None
-    vehicle_model: Optional[str] = None
-    vehicle_year: Optional[str] = None
     vehicle_type_id: Optional[int] = None  # TecDoc vehicle type ID
     manufacturer_id: Optional[int] = None  # TecDoc manufacturer ID
-    model_id: Optional[int] = None  # TecDoc model ID
-    vehicle_id: Optional[int] = None  # TecDoc specific vehicle ID
+    model_id: Optional[int] = None         # TecDoc model ID
+    vehicle_id: Optional[int] = None       # TecDoc specific vehicle ID
+    vehicle_make: Optional[str] = None     # Manufacturer name
+    vehicle_model: Optional[str] = None    # Model name
+    vehicle_year: Optional[str] = None     # Year
+    vehicle_engine: Optional[str] = None   # Engine name
     vehicle_details: Optional[Dict[str, Any]] = None  # Full vehicle details from TecDoc
-    
+
     # Part info
     part_type: Optional[str] = None
     part_specifications: Optional[Dict[str, Any]] = None
-    
+
     # Search results
     search_results: Optional[List[Dict[str, Any]]] = None
     selected_products: Optional[List[Dict[str, Any]]] = None
-    
+
     # Metadata
     language: str = "es"
     channel: str = "web"
-    
+
     def to_dict(self) -> Dict[str, Any]:
         result = {}
         for k, v in self.__dict__.items():
             if isinstance(v, CustomerIntent):
-                # Serialize enum as its value
                 result[k] = v.value
             else:
                 result[k] = v
         return result
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "ConversationContext":
-        # Handle enum deserialization
         if "selected_intent" in data and data["selected_intent"] is not None:
             data["selected_intent"] = CustomerIntent(data["selected_intent"])
         return cls(**data)

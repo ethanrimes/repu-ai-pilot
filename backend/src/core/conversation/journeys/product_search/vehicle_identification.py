@@ -100,35 +100,66 @@ class VehicleIdentificationState(BaseState):
     ) -> Tuple[str, Optional[ConversationState], Optional[Dict[str, Any]]]:
         """Handle vehicle selection from frontend"""
         
+        logger.info(f"[VEHICLE_ID_DEBUG] Starting vehicle selection processing")
+        
         try:
             # Parse vehicle data from message
             vehicle_data = json.loads(user_message.replace("VEHICLE_SELECTED:", ""))
+            logger.info(f"[VEHICLE_ID_DEBUG] Parsed vehicle data: vehicle_id={vehicle_data.get('vehicle_id')}, manufacturer_id={vehicle_data.get('manufacturer_id')}")
             
             # Update context with vehicle information
+            # Fix: Use the correct key names from the vehicle data
+            actual_vehicle_id = vehicle_data.get("vehicleId") or vehicle_data.get("vehicle_id")
+            actual_manufacturer_id = vehicle_data.get("manufacturer_id") or vehicle_data.get("manufacturerId") 
+            
+            logger.info(f"[VEHICLE_ID_DEBUG] Extracted IDs - vehicleId: {actual_vehicle_id}, manufacturerId: {actual_manufacturer_id}")
+            
             context_updates = {
                 "vehicle_type_id": vehicle_data.get("vehicle_type_id"),
-                "manufacturer_id": vehicle_data.get("manufacturer_id"),
+                "manufacturer_id": actual_manufacturer_id,
                 "model_id": vehicle_data.get("model_id"),
-                "vehicle_id": vehicle_data.get("vehicle_id"),
-                "vehicle_make": vehicle_data.get("manufacturer_name"),
-                "vehicle_model": vehicle_data.get("model_name"),
-                "vehicle_year": vehicle_data.get("year"),
+                "vehicle_id": actual_vehicle_id,  # Use the correct vehicle ID
+                "vehicle_make": vehicle_data.get("manufacturer_name") or vehicle_data.get("manufacturerName"),
+                "vehicle_model": vehicle_data.get("model_name") or vehicle_data.get("modelName"),
+                "vehicle_year": vehicle_data.get("year") or vehicle_data.get("constructionIntervalStart"),
+                "vehicle_engine": vehicle_data.get("engine_name") or vehicle_data.get("typeEngineName"),
                 "vehicle_details": vehicle_data
             }
             
             # Format response with vehicle details
-            response = self.get_template("vehicle_selected", language).format(
+            vehicle_confirmation = self.get_template("vehicle_selected", language).format(
                 make=vehicle_data.get("manufacturer_name", "Unknown"),
                 model=vehicle_data.get("model_name", "Unknown"),
                 engine=vehicle_data.get("engine_name", ""),
                 year=vehicle_data.get("year", "Unknown")
             )
             
-            # Add prompt for next step
-            response += "\n\n" + self.get_template("proceed_to_parts", language)
+            # Format final response with category modal trigger
+            from src.config.settings import get_settings
+            settings = get_settings()
             
-            # Transition to part type selection
-            return response, ConversationState.PART_TYPE_SELECTION, context_updates
+            # Create a structured response with both text message and modal trigger
+            proceed_message = self.get_template("proceed_to_parts", language)
+            combined_text_message = f"{vehicle_confirmation}\n\n{proceed_message}"
+            
+            # Create the modal trigger as a separate JSON structure
+            category_trigger = {
+                "type": "OPEN_CATEGORY_MODAL",
+                "message": self.get_template("opening_category_selector", language),
+                "vehicleId": actual_vehicle_id,  # Use the corrected vehicle ID
+                "manufacturerId": actual_manufacturer_id,  # Use the corrected manufacturer ID
+                "categoryLevels": settings.category_dropdown_levels
+            }
+            
+            # Combine the text message with the modal trigger JSON
+            combined_response = f"{combined_text_message}\n\n{json.dumps(category_trigger)}"
+            
+            logger.info(f"[VEHICLE_ID_DEBUG] Transitioning to PART_TYPE_SELECTION state")
+            logger.info(f"[VEHICLE_ID_DEBUG] Context updates: {context_updates}")
+            logger.info(f"[VEHICLE_ID_DEBUG] Category trigger data: vehicleId={category_trigger['vehicleId']}, manufacturerId={category_trigger['manufacturerId']}")
+            
+            # Transition directly to PART_TYPE_SELECTION state
+            return combined_response, ConversationState.PART_TYPE_SELECTION, context_updates
             
         except Exception as e:
             logger.error(f"Error handling vehicle selection: {e}")

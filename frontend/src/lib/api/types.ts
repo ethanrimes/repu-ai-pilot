@@ -1,3 +1,5 @@
+// frontend/src/lib/api/types.ts
+
 // API Response Types
 export interface ApiResponse<T> {
   data: T;
