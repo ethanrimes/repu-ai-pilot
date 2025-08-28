@@ -53,7 +53,7 @@ class Settings(BaseSettings):
     whatsapp_access_token: str
     whatsapp_verify_token: str
     whatsapp_phone_number_id: str
-    whatsapp_webhook_url: Optional[str] = None
+    whatsapp_webhook_url: Optional[str]
     
     # TecDoc API (RapidAPI)
     rapidapi_key: str

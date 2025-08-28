@@ -12,6 +12,8 @@ from src.infrastructure.cache.session_manager import SessionManager
 # Import routers
 from src.api.routers import auth, chat, documents, health, inventory  # Add inventory
 
+from src.api.routers.webhooks import whatsapp as whatsapp_webhook
+
 
 # Import middleware
 from src.api.middleware.error_handler import ErrorHandlerMiddleware
@@ -56,7 +58,8 @@ app.add_middleware(LanguageDetectorMiddleware)
 app.include_router(health.router)
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(chat.router, prefix="/api/v1")
-app.include_router(inventory.router, prefix="/api/v1")  # Add this line
+app.include_router(inventory.router, prefix="/api/v1")
+app.include_router(whatsapp_webhook.router, prefix="/api/v1")
 # app.include_router(documents.router, prefix="/api/v1")
 
 # Initialize scheduler
