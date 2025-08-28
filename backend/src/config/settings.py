@@ -96,6 +96,10 @@ class Settings(BaseSettings):
         extra="ignore"  # Add this to ignore extra env vars
     )
 
+    # Product Search Configuration
+    category_dropdown_levels: int = 3  # Number of category levels to show (1-4)
+    max_articles_per_page: int = 20  # Max articles to show per page
+
 @lru_cache()
 def get_settings() -> Settings:
     """Get cached settings instance"""

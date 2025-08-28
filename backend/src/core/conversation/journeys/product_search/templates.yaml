@@ -33,6 +33,93 @@ es:
   vehicle_selection_error: |
     Hubo un error al procesar la selección del vehículo. Por favor, inténtalo de nuevo.
 
+  # Part/Category Selection
+  opening_category_selector: |
+    Abriendo el selector de categorías de partes... Por favor, selecciona la categoría de la parte que necesitas.
+
+  missing_vehicle_info: |
+    No se encontró información del vehículo. Por favor, primero selecciona tu vehículo.
+
+  category_selection_error: |
+    Hubo un error al procesar la selección de categoría. Por favor, intenta de nuevo.
+
+  category_selected: |
+    ✅ **Categoría seleccionada:** {category}
+
+  proceed_to_inventory: |
+    He encontrado los artículos disponibles para tu vehículo en esta categoría. 
+    Los artículos con disponibilidad en inventario y precios se muestran arriba.
+    
+    ¿Te gustaría ver más detalles sobre algún artículo en particular?
+
+  no_articles_found: |
+    Lo siento, no encontré artículos para esta categoría en tu vehículo.
+    Por favor, intenta con una categoría diferente o contáctanos directamente para asistencia personalizada.
+  
+  no_stock_available: |
+    ⚠️ Actualmente no tenemos inventario disponible para los artículos en esta categoría.
+    
+    Esto puede ser porque:
+    - Los artículos están temporalmente agotados
+    - Son artículos de pedido especial
+    - Necesitan ser importados
+    
+    Por favor, contáctanos directamente para verificar disponibilidad y tiempos de entrega.
+    
+    📞 WhatsApp: +57 XXX XXX XXXX
+    📧 Email: ventas@repuestos.com
+
+  inventory_check_error: |
+    ⚠️ No pude verificar la disponibilidad de inventario en este momento.
+    
+    Los artículos están disponibles en el catálogo, pero necesitas contactarnos para confirmar stock y precios actuales.
+    
+    Por favor contáctanos:
+    📞 WhatsApp: +57 XXX XXX XXXX
+    📧 Email: ventas@repuestos.com
+
+  # New error messages for TecDoc integration
+  categories_fetch_error: |
+    ❌ Error al cargar las categorías de partes desde el catálogo.
+    
+    Esto puede deberse a:
+    - Problemas temporales de conexión con el catálogo
+    - Datos faltantes para tu vehículo específico
+    - Problemas técnicos del sistema
+    
+    Por favor intenta nuevamente o contáctanos directamente.
+
+  articles_fetch_error: |
+    ❌ Error al cargar los artículos para esta categoría.
+    
+    Posibles causas:
+    - Conexión temporal con el catálogo interrumpida
+    - Categoría no disponible para tu vehículo
+    - Sobrecarga del sistema
+    
+    Intenta seleccionar otra categoría o contáctanos para asistencia.
+
+  vehicle_data_missing: |
+    ⚠️ Faltan datos del vehículo necesarios para buscar partes.
+    
+    Información requerida:
+    - ID del vehículo
+    - ID del fabricante
+    - Tipo de vehículo
+    
+    Por favor regresa a la selección de vehículo para completar la información.
+
+  tecdoc_service_unavailable: |
+    🔧 El servicio de catálogo no está disponible temporalmente.
+    
+    Esto significa que no podemos:
+    - Mostrar categorías de partes
+    - Buscar artículos específicos
+    - Verificar compatibilidad con tu vehículo
+    
+    Intenta nuevamente en unos minutos o contáctanos directamente:
+    📞 WhatsApp: +57 XXX XXX XXXX
+
 en:
   # Product Search Init
   product_search_welcome: |
@@ -67,3 +154,90 @@ en:
 
   vehicle_selection_error: |
     There was an error processing the vehicle selection. Please try again.
+
+  # Part/Category Selection
+  opening_category_selector: |
+    Opening parts category selector... Please select the category of the part you need.
+
+  missing_vehicle_info: |
+    Vehicle information not found. Please select your vehicle first.
+
+  category_selection_error: |
+    There was an error processing the category selection. Please try again.
+
+  category_selected: |
+    ✅ **Category selected:** {category}
+
+  proceed_to_inventory: |
+    I've found the available articles for your vehicle in this category.
+    Articles with inventory availability and prices are shown above.
+    
+    Would you like to see more details about any particular article?
+
+  no_articles_found: |
+    Sorry, I couldn't find any articles for this category in your vehicle.
+    Please try a different category or contact us directly for personalized assistance.
+  
+  no_stock_available: |
+    ⚠️ We currently don't have available inventory for the articles in this category.
+    
+    This might be because:
+    - The items are temporarily out of stock
+    - They are special order items
+    - They need to be imported
+    
+    Please contact us directly to check availability and delivery times.
+    
+    📞 WhatsApp: +57 XXX XXX XXXX
+    📧 Email: sales@parts.com
+  
+  inventory_check_error: |
+    ⚠️ I couldn't verify inventory availability at this moment.
+    
+    The articles are available in the catalog, but you need to contact us to confirm current stock and prices.
+    
+    Please contact us:
+    📞 WhatsApp: +57 XXX XXX XXXX
+    📧 Email: sales@parts.com
+
+  # New error messages for TecDoc integration
+  categories_fetch_error: |
+    ❌ Error loading parts categories from the catalog.
+    
+    This could be due to:
+    - Temporary connection issues with the catalog
+    - Missing data for your specific vehicle
+    - Technical system problems
+    
+    Please try again or contact us directly.
+
+  articles_fetch_error: |
+    ❌ Error loading articles for this category.
+    
+    Possible causes:
+    - Temporary catalog connection interrupted
+    - Category not available for your vehicle
+    - System overload
+    
+    Try selecting another category or contact us for assistance.
+
+  vehicle_data_missing: |
+    ⚠️ Missing vehicle data required to search for parts.
+    
+    Required information:
+    - Vehicle ID
+    - Manufacturer ID
+    - Vehicle type
+    
+    Please return to vehicle selection to complete the information.
+
+  tecdoc_service_unavailable: |
+    🔧 The catalog service is temporarily unavailable.
+    
+    This means we cannot:
+    - Show parts categories
+    - Search for specific articles
+    - Verify compatibility with your vehicle
+    
+    Try again in a few minutes or contact us directly:
+    📞 WhatsApp: +57 XXX XXX XXXX
